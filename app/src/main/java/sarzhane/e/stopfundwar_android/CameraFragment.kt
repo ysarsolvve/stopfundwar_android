@@ -1,84 +1,83 @@
 package sarzhane.e.stopfundwar_android
 
 
-import android.Manifest
+
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.*
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.camera.core.*
 import androidx.camera.core.Camera
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import by.kirich1409.viewbindingdelegate.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import io.reactivex.rxjava3.schedulers.Schedulers
+import sarzhane.e.stopfundwar_android.core.navigation.Navigator
+import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
 import sarzhane.e.stopfundwar_android.databinding.FragmentCameraBinding
+import sarzhane.e.stopfundwar_android.presentation.PermissionsFragment
 import sarzhane.e.stopfundwar_android.util.ImageProcess
 import sarzhane.e.stopfundwar_android.util.Recognition
 import sarzhane.e.stopfundwar_android.util.Yolov5TFLiteDetector
 import timber.log.Timber
 import java.util.concurrent.Executors
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class CameraFragment : Fragment(R.layout.fragment_camera) {
+
+    @Inject
+    lateinit var navigator: Navigator
 
     private val binding by viewBinding(FragmentCameraBinding::bind)
     private lateinit var preview: Preview // Preview use case, fast, responsive view of the camera
     private lateinit var imageAnalyzer: ImageAnalysis // Analysis use case, for running ML code
     private lateinit var camera: Camera
     private val cameraExecutor = Executors.newSingleThreadExecutor()
-    var rotation = 0
-    private val REQUEST_CODE_PERMISSIONS = 999 // Return code after asking for permission
-    private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA) // permission needed
     private var yolov5TFLiteDetector: Yolov5TFLiteDetector? = null
-    private  val TAG = "TFL Classify" // Name for logging
+    var rotation = 0
 
     // This property is only valid between onCreateView and
     // onDestroyView.
-    private val viewFinder by lazy {
-        binding.viewFinder // Display the preview image from Camera
+    private val viewFinder by lazy { binding.viewFinder }
+    private val boxLabelCanvas by lazy { binding.boxLabelCanvas }
+
+    override fun onResume() {
+        super.onResume()
+        // Make sure that all permissions are still present, since the
+        // user could have removed them while the app was in paused state.
+        if (!PermissionsFragment.hasPermissions(requireContext())) {
+            navigator.navigateTo(screen = PermissionsScreen(), addToBackStack = false)
+        }
     }
-    private val boxLabelCanvas by lazy {binding.boxLabelCanvas}
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        cameraExecutor.shutdown()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initModel("best")
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewFinder.scaleType = PreviewView.ScaleType.FILL_START
-        // 获取手机摄像头拍照旋转参数
-
-        // 获取手机摄像头拍照旋转参数
-        rotation = 0
-        Timber.i("rotation: " + rotation)
-
-        // 初始化加载yolov5s
-        initModel("best")
-
-        // Request camera permissions
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
-            )
-        }
+        startCamera()
     }
 
     private fun initModel(modelName: String) {
-        // 加载模型
         try {
             yolov5TFLiteDetector = Yolov5TFLiteDetector()
             yolov5TFLiteDetector!!.modelFile = modelName
-            //            this.yolov5TFLiteDetector.addNNApiDelegate();
             yolov5TFLiteDetector!!.addGPUDelegate()
             yolov5TFLiteDetector!!.initialModel(requireActivity())
             Timber.i("Success loading model" + yolov5TFLiteDetector!!.modelFile)
@@ -87,29 +86,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         }
     }
 
-    /**
-     * Check all permissions are granted - use for Camera permission in this example.
-     */
-    private fun allPermissionsGranted(): Boolean = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-            requireContext(), it
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    /**
-     * This gets called after the Camera permission pop up is shown.
-     */
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                startCamera()
-            }
-        }
-    }
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireActivity())
 
@@ -124,7 +100,16 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
                 .also { analysisUseCase: ImageAnalysis ->
-                    analysisUseCase.setAnalyzer(cameraExecutor, ImageAnalyzer(requireContext(), viewFinder,rotation, yolov5TFLiteDetector!!, boxLabelCanvas))
+                    analysisUseCase.setAnalyzer(
+                        cameraExecutor,
+                        ImageAnalyzer(
+                            requireContext(),
+                            viewFinder,
+                            rotation,
+                            yolov5TFLiteDetector!!,
+                            boxLabelCanvas
+                        )
+                    )
                 }
 
             val cameraSelector =
@@ -144,6 +129,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
         }, ContextCompat.getMainExecutor(requireContext()))
     }
+
     private class ImageAnalyzer(
         val ctx: Context, val previewView: PreviewView, val rotation: Int,
         val yolov5TFLiteDetector: Yolov5TFLiteDetector, val boxLabelCanvas: ImageView
@@ -151,7 +137,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         ImageAnalysis.Analyzer {
         val imageProcess: ImageProcess = ImageProcess()
 
-        class Result( var bitmap: Bitmap)
+        class Result(var bitmap: Bitmap)
 
         override fun analyze(image: ImageProxy) {
 
@@ -248,32 +234,22 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                 val cropCanvas = Canvas(emptyCropSizeBitmap)
                 Timber.e("brands " + recognitions)
                 // Пограничная кисть
-                val boxPaint = Paint()
-                boxPaint.strokeWidth = 5f
-                boxPaint.style = Paint.Style.STROKE
-                boxPaint.color = Color.GREEN
-                // Кисть шрифта
-                val textPain = Paint()
-                textPain.textSize = 50f
-                textPain.color = Color.RED
-                textPain.style = Paint.Style.FILL
-                for (res in recognitions!!) {
+                val circlePaint = Paint()
+                circlePaint.isAntiAlias = true
+                circlePaint.style = Paint.Style.FILL
+                circlePaint.color = Color.GREEN
 
+                for (res in recognitions!!) {
                     val location: RectF = res.getLocation()
                     val label: String? = res.labelName
                     val confidence: Float? = res.confidence
                     modelToPreviewTransform.mapRect(location)
-                    cropCanvas.drawRect(location, boxPaint)
-                    cropCanvas.drawText(
-                        label + ":" + String.format("%.2f", confidence),
-                        location.left,
-                        location.top,
-                        textPain
-                    )
+                    cropCanvas.drawCircle(location.centerX(),location.centerY(),15f,circlePaint)
                 }
                 image.close()
                 emitter.onNext(Result(emptyCropSizeBitmap))
-            }).subscribeOn(Schedulers.io()) // Определите здесь watchee, который является потоком в коде выше, если он не определен,
+            })
+                .subscribeOn(Schedulers.io()) // Определите здесь watchee, который является потоком в коде выше, если он не определен,
                 // то это главный поток синхронный, а не асинхронный
                 // Здесь мы возвращаемся в основной поток, где наблюдатель получает данные, отправленные эмиттером, и обрабатывает их
                 .observeOn(AndroidSchedulers.mainThread()) // Здесь мы возвращаемся в главный поток, чтобы обработать

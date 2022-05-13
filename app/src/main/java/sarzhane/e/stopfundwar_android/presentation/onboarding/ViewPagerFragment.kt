@@ -17,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.core.navigation.HomeScreen
 import sarzhane.e.stopfundwar_android.core.navigation.Navigator
+import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
 import sarzhane.e.stopfundwar_android.databinding.FragmentViewPagerBinding
 import sarzhane.e.stopfundwar_android.presentation.splash.view.SplashFragment
 import javax.inject.Inject
@@ -78,7 +79,7 @@ class ViewPagerFragment : Fragment(R.layout.fragment_view_pager) {
             if (onboardingViewPager.currentItem + 1 < onboardingItemsAdapter.itemCount){
                 onboardingViewPager.currentItem += 1
             }else{
-                navigator.navigateTo(screen = HomeScreen())
+                navigator.navigateTo(screen = PermissionsScreen(), addToBackStack = false)
                 onBoardingFinished()
             }
         }

@@ -7,9 +7,10 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import dagger.hilt.android.AndroidEntryPoint
 import sarzhane.e.stopfundwar_android.R
-import sarzhane.e.stopfundwar_android.core.navigation.HomeScreen
 import sarzhane.e.stopfundwar_android.core.navigation.Navigator
+import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
 import sarzhane.e.stopfundwar_android.core.navigation.ViewPagerScreen
+
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -24,7 +25,7 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         Handler().postDelayed({
             if (onBoardingFinished()) {
                 navigator.navigateTo(
-                    screen = HomeScreen(),
+                    screen = PermissionsScreen(),
                     addToBackStack = false,)
             } else {
                 navigator.navigateTo(
