@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/cameraFragment"
-        android:name="sarzhane.e.stopfundwar_android.CameraFragment"
+        android:name="sarzhane.e.stopfundwar_android.presentation.camera.view.CameraFragment"
         android:label="fragment_camera"
         tools:layout="@layout/fragment_camera" />
     <fragment
         android:id="@+id/charityFragment"
-        android:name="sarzhane.e.stopfundwar_android.CharityFragment"
+        android:name="sarzhane.e.stopfundwar_android.presentation.charity.view.CharityFragment"
         android:label="fragment_charity"
         tools:layout="@layout/fragment_charity" />
 </navigation>

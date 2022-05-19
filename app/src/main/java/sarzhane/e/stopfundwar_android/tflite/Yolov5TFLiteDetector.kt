@@ -1,39 +1,38 @@
-package sarzhane.e.stopfundwar_android.util
+package sarzhane.e.stopfundwar_android.tflite
 
 import android.content.Context
-
-import org.tensorflow.lite.support.metadata.MetadataExtractor
-import org.tensorflow.lite.support.common.FileUtil
-import android.widget.Toast
 import android.graphics.Bitmap
-import org.tensorflow.lite.support.image.TensorImage
-import org.tensorflow.lite.support.image.ImageProcessor
-import org.tensorflow.lite.support.image.ops.ResizeOp
-import org.tensorflow.lite.support.common.ops.NormalizeOp
-import org.tensorflow.lite.support.common.ops.QuantizeOp
-import org.tensorflow.lite.support.common.ops.CastOp
-import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
-import org.tensorflow.lite.support.common.TensorProcessor
-import org.tensorflow.lite.support.common.ops.DequantizeOp
 import android.graphics.RectF
-import org.tensorflow.lite.nnapi.NnApiDelegate
 import android.os.Build
 import android.util.Log
 import android.util.Size
+import android.widget.Toast
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.gpu.GpuDelegate
+import org.tensorflow.lite.nnapi.NnApiDelegate
+import org.tensorflow.lite.support.common.FileUtil
+import org.tensorflow.lite.support.common.TensorProcessor
+import org.tensorflow.lite.support.common.ops.CastOp
+import org.tensorflow.lite.support.common.ops.DequantizeOp
+import org.tensorflow.lite.support.common.ops.NormalizeOp
+import org.tensorflow.lite.support.common.ops.QuantizeOp
+import org.tensorflow.lite.support.image.ImageProcessor
+import org.tensorflow.lite.support.image.TensorImage
+import org.tensorflow.lite.support.image.ops.ResizeOp
+import org.tensorflow.lite.support.metadata.MetadataExtractor
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.*
 
 class Yolov5TFLiteDetector {
-    val inputSize = Size(640, 640)
-    val outputSize = intArrayOf(1, 25200, 20)
+    lateinit var inputSize: Size
+    private lateinit var outputSize: IntArray
     private var IS_INT8 = false
-    private val DETECT_THRESHOLD = 0.25f
-    private val IOU_THRESHOLD = 0.45f
+    private val DETECT_THRESHOLD = 0.7f
+    private val IOU_THRESHOLD = 0.7f
     private val IOU_CLASS_DUPLICATED_THRESHOLD = 0.7f
     private val MODEL_YOLOV5S = "yolov5s-fp16-320-metadata.tflite"
     private val BEST = "best.tflite"
@@ -87,6 +86,11 @@ class Yolov5TFLiteDetector {
         try {
             val tfliteModel: ByteBuffer = FileUtil.loadMappedFile(activity!!, "best.tflite")
             tflite = Interpreter(tfliteModel, options)
+            val inputShape = tflite?.getInputTensor(0)?.shape()
+            val outputShape = tflite?.getOutputTensor(0)?.shape()
+            inputSize = Size(inputShape?.get(2) ?: 640 , inputShape?.get(1) ?:640 )
+            Log.i("Detector", "tflite? inputSize ${inputShape?.get(2)} ${inputShape?.get(1)} ")
+            outputSize = outputShape!!
             Log.i("tfliteSupport", "Success reading model: $MODEL_FILE")
             associatedAxisLabels = FileUtil.loadLabels(activity, labelFile)
             Log.i("tfliteSupport", "Success reading label: " + labelFile)
@@ -104,7 +108,6 @@ class Yolov5TFLiteDetector {
      */
     fun detect(bitmap: Bitmap?): ArrayList<Recognition> {
 
-        // yolov5s-tflite的输入是:[1, 320, 320,3], 摄像头每一帧图片需要resize,再归一化
         var yolov5sTfliteInput: TensorImage
         val imageProcessor: ImageProcessor
         if (IS_INT8) {
@@ -136,13 +139,19 @@ class Yolov5TFLiteDetector {
         probabilityBuffer = if (IS_INT8) {
             TensorBuffer.createFixedSize(outputSize, DataType.UINT8)
         } else {
+            Log.i("Detector", "tflite?.getOutputTensor(0)?.shape() ${outputSize[0]} ${outputSize[1]} ${outputSize[2]}")
+            Log.i("Detector", "tflite?.outputTensorCount ${tflite?.outputTensorCount}")
             TensorBuffer.createFixedSize(outputSize, DataType.FLOAT32)
         }
+        val inputs = arrayOf<Any>(yolov5sTfliteInput.buffer)
+        val outputs: MutableMap<Int?, Any?> = HashMap<Int?, Any?>()
+        outputs[0] = probabilityBuffer.buffer
         Log.i("Detector", "stasrt")
         // 推理计算
         if (null != tflite) {
             // 这里tflite默认会加一个batch=1的纬度
-            tflite!!.run(yolov5sTfliteInput.buffer, probabilityBuffer.buffer)
+
+            tflite!!.runForMultipleInputsOutputs(inputs, outputs)
         }
         Log.i("Detector", "Finish")
 

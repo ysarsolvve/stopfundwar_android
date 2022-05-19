@@ -1,31 +1,36 @@
-package sarzhane.e.stopfundwar_android
+package sarzhane.e.stopfundwar_android.presentation.camera.view
 
 
 
-import android.content.Context
 import android.graphics.*
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import androidx.camera.core.*
-import androidx.camera.core.Camera
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import io.reactivex.rxjava3.schedulers.Schedulers
+import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
 import sarzhane.e.stopfundwar_android.databinding.FragmentCameraBinding
 import sarzhane.e.stopfundwar_android.presentation.PermissionsFragment
-import sarzhane.e.stopfundwar_android.util.ImageProcess
-import sarzhane.e.stopfundwar_android.util.Recognition
-import sarzhane.e.stopfundwar_android.util.Yolov5TFLiteDetector
+import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CameraViewModel
+import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult
+import sarzhane.e.stopfundwar_android.tflite.ImageProcess
+import sarzhane.e.stopfundwar_android.tflite.Recognition
+import sarzhane.e.stopfundwar_android.tflite.Yolov5TFLiteDetector
+import sarzhane.e.stopfundwar_android.util.exhaustive
+import sarzhane.e.stopfundwar_android.util.toGone
+import sarzhane.e.stopfundwar_android.util.toVisible
 import timber.log.Timber
 import java.util.concurrent.Executors
 import javax.inject.Inject
@@ -38,16 +43,20 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
     private val binding by viewBinding(FragmentCameraBinding::bind)
     private lateinit var preview: Preview // Preview use case, fast, responsive view of the camera
+    private lateinit var viewFinder: PreviewView // Preview use case, fast, responsive view of the camera
+    private lateinit var boxLabelCanvas: ImageView
     private lateinit var imageAnalyzer: ImageAnalysis // Analysis use case, for running ML code
-    private lateinit var camera: Camera
     private val cameraExecutor = Executors.newSingleThreadExecutor()
+    private var cameraProvider: ProcessCameraProvider? = null
     private var yolov5TFLiteDetector: Yolov5TFLiteDetector? = null
+    lateinit var cameraControl: CameraControl
+    private var flashFlag: Boolean = false
     var rotation = 0
+    private val brandAdapter = BrandAdapter()
+    private val viewModel: CameraViewModel by viewModels()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
-    private val viewFinder by lazy { binding.viewFinder }
-    private val boxLabelCanvas by lazy { binding.boxLabelCanvas }
 
     override fun onResume() {
         super.onResume()
@@ -56,22 +65,60 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         if (!PermissionsFragment.hasPermissions(requireContext())) {
             navigator.navigateTo(screen = PermissionsScreen(), addToBackStack = false)
         }
+        Timber.i("onResume()" )
+        startCamera()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        cameraExecutor.shutdown()
+        Timber.i("onDestroyView()" )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Timber.i("onCreate()" )
         initModel("best")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Timber.i("onViewCreated()" )
+        viewFinder = binding.viewFinder
+        boxLabelCanvas = binding.boxLabelCanvas
         viewFinder.scaleType = PreviewView.ScaleType.FILL_START
-        startCamera()
+        viewModel.searchResult.observe(viewLifecycleOwner, ::handleCompanies)
+        setupReviewsList()
+        binding.ivFlash.setOnClickListener {
+            flashFlag = !flashFlag
+            cameraControl.enableTorch(flashFlag)
+        }
+    }
+
+    private fun handleCompanies(state: CompaniesResult) {
+        when (state) {
+            is CompaniesResult.SuccessResult -> {
+                binding.rvRecognitions.toVisible()
+                brandAdapter.submitList(state.result)
+            }
+            is CompaniesResult.ErrorResult -> {
+            }
+            is CompaniesResult.EmptyResult -> {
+                binding.rvRecognitions.toGone()
+            }
+            CompaniesResult.Loading -> TODO()
+        }.exhaustive
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Timber.i("onDestroy()" )
+        cameraExecutor.shutdown()
+        yolov5TFLiteDetector = null
+        cameraProvider = null
+    }
+
+    private fun setupReviewsList() {
+        binding.rvRecognitions.adapter = brandAdapter
     }
 
     private fun initModel(modelName: String) {
@@ -90,49 +137,63 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireActivity())
 
         cameraProviderFuture.addListener(Runnable {
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            // CameraProvider
+            cameraProvider = cameraProviderFuture.get()
 
-            preview = Preview.Builder()
-                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-                .build()
-
-            imageAnalyzer = ImageAnalysis.Builder()
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .build()
-                .also { analysisUseCase: ImageAnalysis ->
-                    analysisUseCase.setAnalyzer(
-                        cameraExecutor,
-                        ImageAnalyzer(
-                            requireContext(),
-                            viewFinder,
-                            rotation,
-                            yolov5TFLiteDetector!!,
-                            boxLabelCanvas
-                        )
-                    )
-                }
-
-            val cameraSelector =
-                if (cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA))
-                    CameraSelector.DEFAULT_BACK_CAMERA else CameraSelector.DEFAULT_FRONT_CAMERA
-
-            try {
-                cameraProvider.unbindAll()
-                camera = cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageAnalyzer
-                )
-
-                preview.setSurfaceProvider(viewFinder.surfaceProvider)
-            } catch (exc: Exception) {
-                Timber.e(exc, "Use case binding failed")
-            }
-
+            // Build and bind the camera use cases
+            bindCameraUseCases()
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
+    private fun bindCameraUseCases() {
+
+        // CameraProvider
+        val cameraProvider = cameraProvider
+            ?: throw IllegalStateException("Camera initialization failed.")
+
+        preview = Preview.Builder()
+            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            .build()
+            .also {
+                it.setSurfaceProvider(viewFinder.surfaceProvider)
+            }
+
+        imageAnalyzer = ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+            .also { analysisUseCase: ImageAnalysis ->
+                analysisUseCase.setAnalyzer(
+                    cameraExecutor,
+                    ImageAnalyzer(
+                        viewFinder,
+                        rotation,
+                        yolov5TFLiteDetector!!,
+                        boxLabelCanvas,
+                        viewModel
+                    )
+                )
+            }
+
+        val cameraSelector =
+            if (cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA))
+                CameraSelector.DEFAULT_BACK_CAMERA else CameraSelector.DEFAULT_FRONT_CAMERA
+
+        try {
+            cameraProvider.unbindAll()
+            val camera = cameraProvider.bindToLifecycle(
+                this, cameraSelector, preview,imageAnalyzer
+            )
+            cameraControl = camera.cameraControl
+            cameraControl.enableTorch(flashFlag)
+            Timber.e("preview " + preview + " ,imageAnalyzer " + imageAnalyzer + " this"+ this +" cameraProvider"+cameraProvider)
+        } catch (exc: Exception) {
+            Timber.e(exc, "Use case binding failed")
+        }
+    }
+
     private class ImageAnalyzer(
-        val ctx: Context, val previewView: PreviewView, val rotation: Int,
-        val yolov5TFLiteDetector: Yolov5TFLiteDetector, val boxLabelCanvas: ImageView
+        val previewView: PreviewView, val rotation: Int,
+        val yolov5TFLiteDetector: Yolov5TFLiteDetector, val boxLabelCanvas: ImageView,val viewModel: CameraViewModel
     ) :
         ImageAnalysis.Analyzer {
         val imageProcess: ImageProcess = ImageProcess()
@@ -233,33 +294,44 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                 Timber.e("emptyCropSizeBitmap H " + emptyCropSizeBitmap.height + " ,cropImageBitmap W " + emptyCropSizeBitmap.width + " ")
                 val cropCanvas = Canvas(emptyCropSizeBitmap)
                 Timber.e("brands " + recognitions)
-                // Пограничная кисть
-                val circlePaint = Paint()
-                circlePaint.isAntiAlias = true
-                circlePaint.style = Paint.Style.FILL
-                circlePaint.color = Color.GREEN
+//                // Пограничная кисть
+//                val circlePaint = Paint()
+//                circlePaint.isAntiAlias = true
+//                circlePaint.style = Paint.Style.FILL
+//                circlePaint.color = Color.GREEN
+                val boxPaint = Paint()
+                boxPaint.strokeWidth = 5f
+                boxPaint.style = Paint.Style.STROKE
+                boxPaint.color = Color.GREEN
+                // Кисть шрифта
+                val textPain = Paint()
+                textPain.textSize = 50f
+                textPain.color = Color.RED
+                textPain.style = Paint.Style.FILL
 
+                val labelIds = mutableSetOf<Int>()
                 for (res in recognitions!!) {
                     val location: RectF = res.getLocation()
                     val label: String? = res.labelName
                     val confidence: Float? = res.confidence
+                    labelIds.add(res.labelId)
                     modelToPreviewTransform.mapRect(location)
-                    cropCanvas.drawCircle(location.centerX(),location.centerY(),15f,circlePaint)
+//                    cropCanvas.drawCircle(location.centerX(), location.centerY(), 15f, circlePaint)
+                    cropCanvas.drawRect(location, boxPaint)
+                    cropCanvas.drawText(label + ":" + String.format("%.2f", confidence), location.left, location.top, textPain)
                 }
+                viewModel.getCompany(labelIds.map { it.toString() })
+                labelIds.clear()
                 image.close()
                 emitter.onNext(Result(emptyCropSizeBitmap))
             })
-                .subscribeOn(Schedulers.io()) // Определите здесь watchee, который является потоком в коде выше, если он не определен,
-                // то это главный поток синхронный, а не асинхронный
-                // Здесь мы возвращаемся в основной поток, где наблюдатель получает данные, отправленные эмиттером, и обрабатывает их
-                .observeOn(AndroidSchedulers.mainThread()) // Здесь мы возвращаемся в главный поток, чтобы обработать
-                // данные обратного вызова из дочернего потока.
-                ?.subscribe { result: Result? ->
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { result: Result? ->
                     boxLabelCanvas.setImageBitmap(result?.bitmap)
                 }
-
-
         }
     }
+
 
 }

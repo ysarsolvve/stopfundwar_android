@@ -3,10 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/drawable/button.xml" value="0.1935" />
         <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/drawable/charity.xml" value="0.2725" />
         <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/drawable/first.xml" value="0.187" />
+        <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/drawable/gradient.xml" value="0.1935" />
         <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/drawable/indicator_active_background.xml" value="0.2725" />
         <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/drawable/indicator_inactive_background.xml" value="0.2725" />
+        <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/drawable/nav_background_curved.xml" value="0.1935" />
+        <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/drawable/rounded_corner.xml" value="0.1935" />
         <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/layout/activity_main.xml" value="0.2957427536231884" />
         <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/layout/fragment_camera.xml" value="0.2957427536231884" />
         <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/layout/fragment_charity.xml" value="0.2957427536231884" />
@@ -17,6 +21,7 @@
         <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/layout/fragment_splash.xml" value="0.2957427536231884" />
         <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/layout/fragment_third.xml" value="0.2957427536231884" />
         <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/layout/fragment_view_pager.xml" value="0.4" />
+        <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/layout/item_recognition.xml" value="0.2957427536231884" />
         <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/layout/onboarding_item_container.xml" value="0.2957427536231884" />
         <entry key="..\:/Users/Evgeniy/StudioProjects/stopfundwar_android/app/src/main/res/menu/bottom_menu.xml" value="0.36770833333333336" />
       </map>

@@ -1,4 +1,4 @@
-package sarzhane.e.stopfundwar_android.util
+package sarzhane.e.stopfundwar_android.tflite
 
 import androidx.camera.core.ImageProxy
 import android.graphics.Bitmap
