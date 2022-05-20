@@ -15,10 +15,12 @@ class SplashViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    init {
+    fun getCompanies(){
         viewModelScope.launch {
             companiesRepository.getAllCompanies()
         }
     }
+
+
 
 }
