@@ -23,7 +23,7 @@
             android:id="@+id/ivBrand"
             android:layout_width="102dp"
             android:layout_height="36dp"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             tools:src="@drawable/splash_logo_vector"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
@@ -48,21 +48,21 @@
             tools:text="Holding Off New Investments/Development"
             android:layout_marginTop="16dp"
             android:textSize="14sp"
-            android:textColor="@color/orange"
+            tools:textColor="@color/orange"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvBrandName"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
-            android:id="@+id/btnStatus"
+            android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/space_medium"
             tools:text="Digging In"
-            android:background="@drawable/rounded_corner"
+            tools:background="@drawable/rounded_corner_orange"
             android:textSize="14sp"
-            android:textColor="@color/orange"
+            tools:textColor="@color/orange"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>

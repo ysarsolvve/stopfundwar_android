@@ -55,13 +55,9 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     private val brandAdapter = BrandAdapter()
     private val viewModel: CameraViewModel by viewModels()
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
 
     override fun onResume() {
         super.onResume()
-        // Make sure that all permissions are still present, since the
-        // user could have removed them while the app was in paused state.
         if (!PermissionsFragment.hasPermissions(requireContext())) {
             navigator.navigateTo(screen = PermissionsScreen(), addToBackStack = false)
         }
@@ -77,7 +73,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.i("onCreate()" )
-        initModel("best")
+        initModel()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -121,13 +117,11 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         binding.rvRecognitions.adapter = brandAdapter
     }
 
-    private fun initModel(modelName: String) {
+    private fun initModel() {
         try {
             yolov5TFLiteDetector = Yolov5TFLiteDetector()
-            yolov5TFLiteDetector!!.modelFile = modelName
             yolov5TFLiteDetector!!.addGPUDelegate()
             yolov5TFLiteDetector!!.initialModel(requireActivity())
-            Timber.i("Success loading model" + yolov5TFLiteDetector!!.modelFile)
         } catch (e: java.lang.Exception) {
             Timber.e("load model error: " + e.message + e.toString())
         }
@@ -325,7 +319,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                 image.close()
                 emitter.onNext(Result(emptyCropSizeBitmap))
             })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { result: Result? ->
                     boxLabelCanvas.setImageBitmap(result?.bitmap)

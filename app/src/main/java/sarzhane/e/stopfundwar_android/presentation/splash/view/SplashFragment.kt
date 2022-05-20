@@ -21,12 +21,9 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
     @Inject
     lateinit var navigator: Navigator
 
-    private val viewModel: SplashViewModel by viewModels()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel
 
         Handler().postDelayed({
             if (onBoardingFinished()) {

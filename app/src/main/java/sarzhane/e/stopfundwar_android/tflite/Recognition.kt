@@ -17,10 +17,6 @@ class Recognition(
         return RectF(location)
     }
 
-    fun setLocation(location: RectF?) {
-        this.location = location
-    }
-
     override fun toString(): String {
         var resultString = ""
         resultString += "$labelId "
