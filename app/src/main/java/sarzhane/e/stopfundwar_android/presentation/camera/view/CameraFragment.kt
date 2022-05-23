@@ -23,6 +23,7 @@ import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
 import sarzhane.e.stopfundwar_android.databinding.FragmentCameraBinding
 import sarzhane.e.stopfundwar_android.presentation.PermissionsFragment
+import sarzhane.e.stopfundwar_android.presentation.camera.info.InfoDialogFragment
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CameraViewModel
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult
 import sarzhane.e.stopfundwar_android.tflite.ImageProcess
@@ -88,6 +89,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
             flashFlag = !flashFlag
             cameraControl.enableTorch(flashFlag)
         }
+        binding.ivInfo.setOnClickListener { showInfoDialogFragment() }
     }
 
     private fun handleCompanies(state: CompaniesResult) {
@@ -99,7 +101,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
             is CompaniesResult.ErrorResult -> {
             }
             is CompaniesResult.EmptyResult -> {
-                binding.rvRecognitions.toGone()
+                binding.rvRecognitions.toVisible()
             }
             CompaniesResult.Loading -> TODO()
         }.exhaustive
@@ -327,5 +329,8 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         }
     }
 
-
+    private fun showInfoDialogFragment() {
+        val dialogFragment = InfoDialogFragment.newInstance()
+        dialogFragment.show(childFragmentManager, InfoDialogFragment.TAG)
+    }
 }
