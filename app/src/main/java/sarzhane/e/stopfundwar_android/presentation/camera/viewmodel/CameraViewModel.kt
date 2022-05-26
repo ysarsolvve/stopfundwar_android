@@ -26,12 +26,12 @@ class CameraViewModel @Inject constructor(
 
     fun getCompany(ids: List<String>){
         viewModelScope.launch {
-            getCompanyById(ids)
+            getCompaniesByIds(ids)
         }
     }
 
-    private suspend fun getCompanyById(ids: List<String>){
-        val result = companiesRepository.getCompanies(ids)
+    private suspend fun getCompaniesByIds(ids: List<String>){
+        val result = companiesRepository.getCompaniesByIds(ids)
         Log.d("response", "${result}")
         if (result.isNotEmpty())_searchResult.value = SuccessResult(result)
         else _searchResult.value = EmptyResult

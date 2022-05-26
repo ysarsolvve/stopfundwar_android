@@ -18,6 +18,12 @@ interface CompaniesDao {
         """)
     suspend fun getById(ids: List<String>): List<CompanyEntity>
 
+    @Query("""
+        SELECT *
+        FROM ${CompanyEntity.TABLE_NAME}
+        """)
+    suspend fun getData(): List<CompanyEntity>
+
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(companies: List<CompanyEntity>)
@@ -28,4 +34,14 @@ interface CompaniesDao {
     @Transaction
     @Query("DELETE FROM ${CompanyEntity.TABLE_NAME}")
     suspend fun deleteAll()
+
+    @Query("""
+        SELECT *
+        FROM ${CompanyEntity.TABLE_NAME}
+        WHERE ${CompanyEntity.BRAND_NAME}
+        LIKE (:searchQuery)
+        AND ${CompanyEntity.STATUS_INFO}
+        LIKE (:filter)
+        """)
+    suspend fun getCompanies(searchQuery: String, filter: String): List<CompanyEntity>
 }

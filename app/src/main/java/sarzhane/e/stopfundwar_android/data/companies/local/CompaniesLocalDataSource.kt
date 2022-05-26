@@ -1,5 +1,6 @@
 package sarzhane.e.stopfundwar_android.data.companies.local
 
+import sarzhane.e.stopfundwar_android.domain.companies.Company
 import javax.inject.Inject
 
 interface CompaniesLocalDataSource {
@@ -8,6 +9,8 @@ interface CompaniesLocalDataSource {
     suspend fun insertAll(companies: List<CompanyEntity>)
     suspend fun insert(company: CompanyEntity)
     suspend fun deleteAll()
+    suspend fun getData(): List<CompanyEntity>
+    suspend fun getCompanies(searchQuery: String, filter: String): List<CompanyEntity>
 }
 
 class CompaniesLocalDataSourceImpl @Inject constructor(
@@ -26,5 +29,13 @@ class CompaniesLocalDataSourceImpl @Inject constructor(
 
     override suspend fun deleteAll() {
         companiesDao.deleteAll()
+    }
+
+    override suspend fun getData(): List<CompanyEntity> {
+       return companiesDao.getData()
+    }
+
+    override suspend fun getCompanies(searchQuery: String, filter: String): List<CompanyEntity> {
+        return companiesDao.getCompanies(searchQuery, filter)
     }
 }

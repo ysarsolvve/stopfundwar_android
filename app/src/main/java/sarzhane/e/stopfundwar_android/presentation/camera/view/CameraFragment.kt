@@ -30,7 +30,6 @@ import sarzhane.e.stopfundwar_android.tflite.ImageProcess
 import sarzhane.e.stopfundwar_android.tflite.Recognition
 import sarzhane.e.stopfundwar_android.tflite.Yolov5TFLiteDetector
 import sarzhane.e.stopfundwar_android.util.exhaustive
-import sarzhane.e.stopfundwar_android.util.toGone
 import sarzhane.e.stopfundwar_android.util.toVisible
 import timber.log.Timber
 import java.util.concurrent.Executors
@@ -82,14 +81,11 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         Timber.i("onViewCreated()" )
         viewFinder = binding.viewFinder
         boxLabelCanvas = binding.boxLabelCanvas
+        binding.ivInfo.setOnClickListener { showInfoDialogFragment() }
         viewFinder.scaleType = PreviewView.ScaleType.FILL_START
         viewModel.searchResult.observe(viewLifecycleOwner, ::handleCompanies)
         setupReviewsList()
-        binding.ivFlash.setOnClickListener {
-            flashFlag = !flashFlag
-            cameraControl.enableTorch(flashFlag)
-        }
-        binding.ivInfo.setOnClickListener { showInfoDialogFragment() }
+        setupCameraFlash()
     }
 
     private fun handleCompanies(state: CompaniesResult) {
@@ -118,6 +114,12 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     private fun setupReviewsList() {
         binding.rvRecognitions.adapter = brandAdapter
     }
+    private fun setupCameraFlash() {
+        binding.ivFlash.setOnClickListener {
+            flashFlag = !flashFlag
+            cameraControl.enableTorch(flashFlag)
+        }
+    }
 
     private fun initModel() {
         try {
@@ -132,7 +134,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireActivity())
 
-        cameraProviderFuture.addListener(Runnable {
+        cameraProviderFuture.addListener( {
             // CameraProvider
             cameraProvider = cameraProviderFuture.get()
 
@@ -283,7 +285,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                 val modelToPreviewTransform = Matrix()
                 previewToModelTransform.invert(modelToPreviewTransform)
                 Timber.e("modelInputBitmap H " + modelInputBitmap.height + " ,cropImageBitmap W " + modelInputBitmap.width + " ")
-                val recognitions: ArrayList<Recognition>? =
+                val recognitions: ArrayList<Recognition> =
                     yolov5TFLiteDetector.detect(modelInputBitmap)
                 val emptyCropSizeBitmap =
                     Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888)
@@ -306,7 +308,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                 textPain.style = Paint.Style.FILL
 
                 val labelIds = mutableSetOf<Int>()
-                for (res in recognitions!!) {
+                for (res in recognitions) {
                     val location: RectF = res.getLocation()
                     val label: String? = res.labelName
                     val confidence: Float? = res.confidence

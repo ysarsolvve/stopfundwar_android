@@ -9,4 +9,12 @@
         <item name="android:textSize">30sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+    <style name="SearchStyle">
+        <item name="android:background">@drawable/bg_search</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColorHint">@color/textColorHint</item>
+        <item name="android:hint">@string/hint_search_query</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/textColorHint</item>
+    </style>
 </resources>

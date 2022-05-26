@@ -16,7 +16,11 @@ interface CompaniesRepository {
 
     suspend fun getAllCompanies()
 
-    suspend fun getCompanies(ids: List<String>): List<Company>
+    suspend fun getData(): List<Company>
+
+    suspend fun getCompaniesByIds(ids: List<String>): List<Company>
+
+    suspend fun getCompanies(searchQuery: String, filter: String): List<Company>
 
 
 }
@@ -34,7 +38,15 @@ class CompaniesRepositoryImpl @Inject constructor(
         companiesLocalDataSource.insertAll(companyEntities)
 }
 
-    override suspend fun getCompanies(ids: List<String>): List<Company> {
+    override suspend fun getData(): List<Company> {
+        return companiesLocalDataSource.getData().map { it.toModel() }
+    }
+
+    override suspend fun getCompaniesByIds(ids: List<String>): List<Company> {
        return companiesLocalDataSource.getById(ids).map { it.toModel() }
+    }
+
+    override suspend fun getCompanies(searchQuery: String, filter: String): List<Company> {
+        return companiesLocalDataSource.getCompanies(searchQuery, filter).map { it.toModel() }
     }
 }

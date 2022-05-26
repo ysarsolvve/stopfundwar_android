@@ -6,6 +6,11 @@
     app:startDestination="@id/cameraFragment">
 
     <fragment
+        android:id="@+id/companiesFragment"
+        android:name="sarzhane.e.stopfundwar_android.presentation.companies.view.CompaniesFragment"
+        android:label="fragment_companies"
+        tools:layout="@layout/fragment_camera" />
+    <fragment
         android:id="@+id/cameraFragment"
         android:name="sarzhane.e.stopfundwar_android.presentation.camera.view.CameraFragment"
         android:label="fragment_camera"
