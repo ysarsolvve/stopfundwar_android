@@ -59,7 +59,6 @@ android {
 
 ext {
     versions = [
-            glide           : "4.6.1",
             gson            : "2.8.7",
             kotlinExt       : "2.3.1",
             kotlinCoroutines: "1.5.2",

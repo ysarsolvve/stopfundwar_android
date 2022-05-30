@@ -17,4 +17,32 @@
         <item name="android:textSize">17sp</item>
         <item name="android:textColor">@color/textColorHint</item>
     </style>
+    <style name="CustomChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_background_color</item>
+        <item name="android:textColor">@color/chip_text_color</item>
+        <item name="checkedIconTint">@color/chip_text_color</item>
+        <item name="checkedIconEnabled">false</item>
+        <item name="checkedIcon">@null</item>
+    </style>
+    <style name="CustomRedChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_red_background_color</item>
+        <item name="android:textColor">@color/chip_red_text_color</item>
+        <item name="checkedIconTint">@color/chip_red_text_color</item>
+        <item name="checkedIconEnabled">false</item>
+        <item name="checkedIcon">@null</item>
+    </style>
+    <style name="CustomOrangeChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_orange_background_color</item>
+        <item name="android:textColor">@color/chip_orange_text_color</item>
+        <item name="checkedIconTint">@color/chip_orange_text_color</item>
+        <item name="checkedIconEnabled">false</item>
+        <item name="checkedIcon">@null</item>
+    </style>
+    <style name="CustomGreenChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_green_background_color</item>
+        <item name="android:textColor">@color/chip_green_text_color</item>
+        <item name="checkedIconTint">@color/chip_green_text_color</item>
+        <item name="checkedIconEnabled">false</item>
+        <item name="checkedIcon">@null</item>
+    </style>
 </resources>

@@ -18,6 +18,8 @@ interface CompaniesRepository {
 
     suspend fun getData(): List<Company>
 
+    suspend fun getDataByFilter(filter: String): List<Company>
+
     suspend fun getCompaniesByIds(ids: List<String>): List<Company>
 
     suspend fun getCompanies(searchQuery: String, filter: String): List<Company>
@@ -40,6 +42,10 @@ class CompaniesRepositoryImpl @Inject constructor(
 
     override suspend fun getData(): List<Company> {
         return companiesLocalDataSource.getData().map { it.toModel() }
+    }
+
+    override suspend fun getDataByFilter(filter: String): List<Company> {
+        return companiesLocalDataSource.getDataByFilter( filter).map { it.toModel() }
     }
 
     override suspend fun getCompaniesByIds(ids: List<String>): List<Company> {

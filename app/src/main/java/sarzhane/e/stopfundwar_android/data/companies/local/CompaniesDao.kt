@@ -21,6 +21,7 @@ interface CompaniesDao {
     @Query("""
         SELECT *
         FROM ${CompanyEntity.TABLE_NAME}
+        ORDER BY ${CompanyEntity.BRAND_NAME} ASC
         """)
     suspend fun getData(): List<CompanyEntity>
 
@@ -42,6 +43,25 @@ interface CompaniesDao {
         LIKE (:searchQuery)
         AND ${CompanyEntity.STATUS_INFO}
         LIKE (:filter)
+        ORDER BY ${CompanyEntity.BRAND_NAME} ASC
         """)
     suspend fun getCompanies(searchQuery: String, filter: String): List<CompanyEntity>
+
+    @Query("""
+        SELECT *
+        FROM ${CompanyEntity.TABLE_NAME}
+        WHERE ${CompanyEntity.BRAND_NAME}
+        LIKE :searchQuery
+        ORDER BY ${CompanyEntity.BRAND_NAME} ASC
+        """)
+    suspend fun getCompaniesWithoutFilter(searchQuery: String): List<CompanyEntity>
+
+    @Query("""
+        SELECT *
+        FROM ${CompanyEntity.TABLE_NAME}
+        WHERE ${CompanyEntity.STATUS_INFO}
+        LIKE :filter
+        ORDER BY ${CompanyEntity.BRAND_NAME} ASC
+        """)
+    suspend fun getDataByFilter(filter: String): List<CompanyEntity>
 }

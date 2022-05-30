@@ -1,16 +1,11 @@
 package sarzhane.e.stopfundwar_android.presentation.companies.viewmodel
 
-
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import sarzhane.e.stopfundwar_android.data.companies.CompaniesRepository
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult
@@ -31,9 +26,12 @@ class CompaniesViewModel @Inject constructor(
 
     fun onNewQuery(query: String, filter: String) {
        viewModelScope.launch {
-           if (query.isEmpty()) {
+           if (query.isEmpty() && filter == "All") {
                getData()
-           } else {
+           } else if (query.isEmpty() && filter != "All"){
+               getDataByFilter(filter)
+           }
+           else {
                getCompanies(query, filter)
            }
        }
@@ -51,6 +49,12 @@ class CompaniesViewModel @Inject constructor(
     }
     private suspend fun getData(){
         val result = companiesRepository.getData()
+        if (result.isNotEmpty())_searchResult.value = SuccessResult(result)
+        else _searchResult.value = EmptyResult
+    }
+
+    private suspend fun getDataByFilter(filter: String){
+        val result = companiesRepository.getDataByFilter(filter)
         if (result.isNotEmpty())_searchResult.value = SuccessResult(result)
         else _searchResult.value = EmptyResult
     }

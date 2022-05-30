@@ -28,13 +28,78 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroup"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:singleLine="true"
-            app:singleSelection="true">
-        </com.google.android.material.chip.ChipGroup>
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:checkedChip="@+id/chipAll"
+                app:selectionRequired="true"
+                app:singleLine="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    style="@style/CustomChipStyle"
+                    android:id="@+id/chipAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chip_all"/>
+
+                <com.google.android.material.chip.Chip
+                    style="@style/CustomRedChipStyle"
+                    android:id="@+id/chipDiggingIn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chip_digging_in"/>
+
+                <com.google.android.material.chip.Chip
+                    style="@style/CustomGreenChipStyle"
+                    android:id="@+id/chipBuyingTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chip_buying_time"/>
+
+                <com.google.android.material.chip.Chip
+                    style="@style/CustomRedChipStyle"
+                    android:id="@+id/chipRussian"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chip_russian"/>
+
+                <com.google.android.material.chip.Chip
+                    style="@style/CustomOrangeChipStyle"
+                    android:id="@+id/chipScalingBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chip_scaling_back"/>
+
+                <com.google.android.material.chip.Chip
+                    style="@style/CustomGreenChipStyle"
+                    android:id="@+id/chipSuspension"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chip_suspension"/>
+
+                <com.google.android.material.chip.Chip
+                    style="@style/CustomGreenChipStyle"
+                    android:id="@+id/chipWithdrawal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chip_withdrawal"/>
+
+                <com.google.android.material.chip.Chip
+                    style="@style/CustomGreenChipStyle"
+                    android:id="@+id/chipUkrainian"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chip_ukrainian"/>
+
+            </com.google.android.material.chip.ChipGroup>
+        </LinearLayout>
     </HorizontalScrollView>
 
 

@@ -2,4 +2,12 @@
     <string name="app_name">stopfundwar_android</string>
     <string name="splash_text">STOP FUNDING WAR</string>
     <string name="hint_search_query">Search</string>
+    <string name="chip_all">All</string>
+    <string name="chip_digging_in">Digging In</string>
+    <string name="chip_buying_time">Buying Time</string>
+    <string name="chip_russian">Russian</string>
+    <string name="chip_scaling_back">Scaling Back</string>
+    <string name="chip_suspension">Suspension</string>
+    <string name="chip_withdrawal">Withdrawal</string>
+    <string name="chip_ukrainian">Ukrainian</string>
 </resources>

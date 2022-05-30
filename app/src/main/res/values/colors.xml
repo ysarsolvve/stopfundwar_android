@@ -17,4 +17,29 @@
     <color name="transparent">#80000000</color>
     <color name="textColorHint">#767680</color>
     <color name="bg_search">#E8E8E8</color>
+
+    // Custom Chip Style
+    <color name="checkedChipBackgroundColor">#CBCBCB</color>
+    <color name="chipBackgroundColor">@color/bg_search</color>
+    <color name="checkedChipTextColor">@color/black</color>
+    <color name="chipTextColor">#999999</color>
+
+    // Custom Red Chip Style
+    <color name="checkedRedChipBackgroundColor">@color/light_red</color>
+    <color name="chipRedBackgroundColor">@color/bg_search</color>
+    <color name="checkedRedChipTextColor">@color/red</color>
+    <color name="chipRedTextColor">#999999</color>
+
+    // Custom Orange Chip Style
+    <color name="checkedOrangeChipBackgroundColor">@color/light_orange</color>
+    <color name="chipOrangeBackgroundColor">@color/bg_search</color>
+    <color name="checkedOrangeChipTextColor">@color/orange</color>
+    <color name="chipOrangeTextColor">#999999</color>
+
+    // Custom Green Chip Style
+    <color name="checkedGreenChipBackgroundColor">@color/light_green</color>
+    <color name="chipGreenBackgroundColor">@color/bg_search</color>
+    <color name="checkedGreenChipTextColor">@color/green</color>
+    <color name="chipGreenTextColor">#999999</color>
+
 </resources>
