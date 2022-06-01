@@ -2,22 +2,31 @@ package sarzhane.e.stopfundwar_android.presentation.camera.view
 
 
 
+import android.annotation.SuppressLint
 import android.graphics.*
 import android.os.Bundle
+import android.util.Log
+import android.util.Size
 import android.view.View
-import android.widget.ImageView
+import android.view.ViewGroup
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableOnSubscribe
-import io.reactivex.rxjava3.schedulers.Schedulers
+import org.tensorflow.lite.DataType
+import org.tensorflow.lite.Interpreter
+import org.tensorflow.lite.nnapi.NnApiDelegate
+import org.tensorflow.lite.support.common.FileUtil
+import org.tensorflow.lite.support.common.ops.NormalizeOp
+import org.tensorflow.lite.support.image.ImageProcessor
+import org.tensorflow.lite.support.image.TensorImage
+import org.tensorflow.lite.support.image.ops.ResizeOp
+import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp
+import org.tensorflow.lite.support.image.ops.Rot90Op
 import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
@@ -26,14 +35,14 @@ import sarzhane.e.stopfundwar_android.presentation.PermissionsFragment
 import sarzhane.e.stopfundwar_android.presentation.camera.info.InfoDialogFragment
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CameraViewModel
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult
-import sarzhane.e.stopfundwar_android.tflite.ImageProcess
-import sarzhane.e.stopfundwar_android.tflite.Recognition
-import sarzhane.e.stopfundwar_android.tflite.Yolov5TFLiteDetector
+import sarzhane.e.stopfundwar_android.tflite.ObjectDetectionHelper
 import sarzhane.e.stopfundwar_android.util.exhaustive
 import sarzhane.e.stopfundwar_android.util.toVisible
 import timber.log.Timber
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.math.min
 
 @AndroidEntryPoint
 class CameraFragment : Fragment(R.layout.fragment_camera) {
@@ -42,30 +51,222 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     lateinit var navigator: Navigator
 
     private val binding by viewBinding(FragmentCameraBinding::bind)
-    private lateinit var preview: Preview // Preview use case, fast, responsive view of the camera
-    private lateinit var viewFinder: PreviewView // Preview use case, fast, responsive view of the camera
-    private lateinit var boxLabelCanvas: ImageView
-    private lateinit var imageAnalyzer: ImageAnalysis // Analysis use case, for running ML code
-    private val cameraExecutor = Executors.newSingleThreadExecutor()
-    private var cameraProvider: ProcessCameraProvider? = null
-    private var yolov5TFLiteDetector: Yolov5TFLiteDetector? = null
-    lateinit var cameraControl: CameraControl
-    private var flashFlag: Boolean = false
-    var rotation = 0
     private val brandAdapter = BrandAdapter()
     private val viewModel: CameraViewModel by viewModels()
+    lateinit var cameraControl: CameraControl
+    private var flashFlag: Boolean = false
 
+    private lateinit var bitmapBuffer: Bitmap
+
+    private val executor = Executors.newSingleThreadExecutor()
+    private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
+    private var imageRotationDegrees: Int = 0
+    private val tfImageBuffer = TensorImage(DataType.FLOAT32)
+
+    private val tfImageProcessor by lazy {
+        val cropSize = minOf(bitmapBuffer.width, bitmapBuffer.height)
+        Log.d("tfImageProcessor","cropSize $cropSize")
+        ImageProcessor.Builder()
+            .add(ResizeWithCropOrPadOp(cropSize, cropSize))
+            .add(
+                ResizeOp(
+                tfInputSize.height, tfInputSize.width, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR)
+            )
+            .add(Rot90Op(-imageRotationDegrees / 90))
+            .add(NormalizeOp(127.5f, 127.5f))
+            .build()
+    }
+
+    private val nnApiDelegate by lazy  {
+        NnApiDelegate()
+    }
+
+    private val tflite by lazy {
+        val options: Interpreter.Options = Interpreter.Options()
+        options.setNumThreads(5)
+        options.setUseNNAPI(true)
+        Interpreter(
+            FileUtil.loadMappedFile(requireContext(), MODEL_PATH),
+            options)
+    }
+    private val detector by lazy {
+        ObjectDetectionHelper(
+            tflite,
+            FileUtil.loadLabels(requireContext(), LABELS_PATH)
+        )
+    }
+
+    private val tfInputSize by lazy {
+        val inputIndex = 0
+        val inputShape = tflite.getInputTensor(inputIndex).shape()
+        Size(inputShape[2], inputShape[1]) // Order of axis is: {1, height, width, 3}
+    }
 
     override fun onResume() {
         super.onResume()
         if (!PermissionsFragment.hasPermissions(requireContext())) {
             navigator.navigateTo(screen = PermissionsScreen(), addToBackStack = false)
+        }else {
+            bindCameraUseCases()
         }
-        Timber.i("onResume()" )
-        startCamera()
+    }
+
+    /** Declare and bind preview and analysis use cases */
+    @SuppressLint("UnsafeExperimentalUsageError")
+    private fun bindCameraUseCases() = binding.viewFinder.post {
+
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+        cameraProviderFuture.addListener ({
+
+            // Camera provider is now guaranteed to be available
+            val cameraProvider = cameraProviderFuture.get()
+
+            // Set up the view finder use case to display camera preview
+            val preview = Preview.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                .setTargetRotation(binding.viewFinder.display.rotation)
+                .build()
+
+            // Set up the image analysis use case which will process frames in real time
+            val imageAnalysis = ImageAnalysis.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                .setTargetRotation(binding.viewFinder.display.rotation)
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+                .build()
+
+            var frameCounter = 0
+            var lastFpsTimestamp = System.currentTimeMillis()
+
+            imageAnalysis.setAnalyzer(executor, ImageAnalysis.Analyzer { image ->
+                if (!::bitmapBuffer.isInitialized) {
+                    // The image rotation and RGB image buffer are initialized only once
+                    // the analyzer has started running
+                    imageRotationDegrees = image.imageInfo.rotationDegrees
+                    bitmapBuffer = Bitmap.createBitmap(
+                        image.width, image.height, Bitmap.Config.ARGB_8888)
+                }
+
+
+                // Copy out RGB bits to our shared buffer
+                image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer)  }
+
+                // Process the image in Tensorflow
+                val tfImage =  tfImageProcessor.process(tfImageBuffer.apply { load(bitmapBuffer) })
+
+                // Perform the object detection for the current frame
+                val predictions = detector.predict(tfImage)
+
+                // Report only the top prediction
+                reportPrediction(predictions.maxByOrNull { it.score })
+
+                // Compute the FPS of the entire pipeline
+                val frameCount = 10
+                if (++frameCounter % frameCount == 0) {
+                    frameCounter = 0
+                    val now = System.currentTimeMillis()
+                    val delta = now - lastFpsTimestamp
+                    val fps = 1000 * frameCount.toFloat() / delta
+                    Log.d("TAG", "FPS: ${"%.02f".format(fps)} with tensorSize: ${tfImage.width} x ${tfImage.height}")
+                    lastFpsTimestamp = now
+                }
+            })
+
+            // Create a new camera selector each time, enforcing lens facing
+            val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+
+            // Apply declared configs to CameraX using the same lifecycle owner
+            cameraProvider.unbindAll()
+            val camera = cameraProvider.bindToLifecycle(
+                this as LifecycleOwner, cameraSelector, preview, imageAnalysis)
+
+            cameraControl = camera.cameraControl
+            cameraControl.enableTorch(flashFlag)
+
+            // Use the camera object to link our preview use case with the view
+            preview.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+
+        }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    private fun reportPrediction(
+        prediction: ObjectDetectionHelper.ObjectPrediction?
+    ) = binding.viewFinder.post {
+
+        // Early exit: if prediction is not good enough, don't report it
+        if (prediction == null || prediction.score < ACCURACY_THRESHOLD) {
+            binding.boxPrediction.visibility = View.GONE
+            binding.textPrediction.visibility = View.GONE
+            return@post
+        }
+
+        // Location has to be mapped to our local coordinates
+        val location = mapOutputCoordinates(prediction.location)
+
+        // Update the text and UI
+        binding.textPrediction.text = "${"%.2f".format(prediction.score)} ${prediction.label}"
+        (binding.boxPrediction.layoutParams as ViewGroup.MarginLayoutParams).apply {
+            topMargin = location.top.toInt()
+            leftMargin = location.left.toInt()
+            width = min(binding.viewFinder.width, location.right.toInt() - location.left.toInt())
+            height = min(binding.viewFinder.height, location.bottom.toInt() - location.top.toInt())
+        }
+
+        // Make sure all UI elements are visible
+        binding.boxPrediction.visibility = View.VISIBLE
+        binding.textPrediction.visibility = View.VISIBLE
+
+    }
+
+    /**
+     * Helper function used to map the coordinates for objects coming out of
+     * the model into the coordinates that the user sees on the screen.
+     */
+    private fun mapOutputCoordinates(location: RectF): RectF {
+
+        // Step 1: map location to the preview coordinates
+        val previewLocation = RectF(
+            location.left * binding.viewFinder.width,
+            location.top * binding.viewFinder.height,
+            location.right * binding.viewFinder.width,
+            location.bottom * binding.viewFinder.height
+        )
+
+        // Step 2: compensate for camera sensor orientation and mirroring
+        val correctedLocation = previewLocation
+
+        // Step 3: compensate for 1:1 to 4:3 aspect ratio conversion + small margin
+        val margin = 0.1f
+        val requestedRatio = 4f / 3f
+        val midX = (correctedLocation.left + correctedLocation.right) / 2f
+        val midY = (correctedLocation.top + correctedLocation.bottom) / 2f
+        return if (binding.viewFinder.width < binding.viewFinder.height) {
+            RectF(
+                midX - (1f + margin) * requestedRatio * correctedLocation.width() / 2f,
+                midY - (1f - margin) * correctedLocation.height() / 2f,
+                midX + (1f + margin) * requestedRatio * correctedLocation.width() / 2f,
+                midY + (1f - margin) * correctedLocation.height() / 2f
+            )
+        } else {
+            RectF(
+                midX - (1f - margin) * correctedLocation.width() / 2f,
+                midY - (1f + margin) * requestedRatio * correctedLocation.height() / 2f,
+                midX + (1f - margin) * correctedLocation.width() / 2f,
+                midY + (1f + margin) * requestedRatio * correctedLocation.height() / 2f
+            )
+        }
     }
 
     override fun onDestroyView() {
+        // Terminate all outstanding analyzing jobs (if there is any).
+        executor.apply {
+            shutdown()
+            awaitTermination(1000, TimeUnit.MILLISECONDS)
+        }
+
+        // Release TFLite resources.
+        tflite.close()
+        nnApiDelegate.close()
         super.onDestroyView()
         Timber.i("onDestroyView()" )
     }
@@ -73,16 +274,12 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.i("onCreate()" )
-        initModel()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.i("onViewCreated()" )
-        viewFinder = binding.viewFinder
-        boxLabelCanvas = binding.boxLabelCanvas
         binding.ivInfo.setOnClickListener { showInfoDialogFragment() }
-        viewFinder.scaleType = PreviewView.ScaleType.FILL_START
         viewModel.searchResult.observe(viewLifecycleOwner, ::handleCompanies)
         setupReviewsList()
         setupCameraFlash()
@@ -106,9 +303,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     override fun onDestroy() {
         super.onDestroy()
         Timber.i("onDestroy()" )
-        cameraExecutor.shutdown()
-        yolov5TFLiteDetector = null
-        cameraProvider = null
     }
 
     private fun setupReviewsList() {
@@ -121,218 +315,16 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         }
     }
 
-    private fun initModel() {
-        try {
-            yolov5TFLiteDetector = Yolov5TFLiteDetector()
-            yolov5TFLiteDetector!!.addGPUDelegate()
-            yolov5TFLiteDetector!!.initialModel(requireActivity())
-        } catch (e: java.lang.Exception) {
-            Timber.e("load model error: " + e.message + e.toString())
-        }
-    }
-
-    private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireActivity())
-
-        cameraProviderFuture.addListener( {
-            // CameraProvider
-            cameraProvider = cameraProviderFuture.get()
-
-            // Build and bind the camera use cases
-            bindCameraUseCases()
-        }, ContextCompat.getMainExecutor(requireContext()))
-    }
-
-    private fun bindCameraUseCases() {
-
-        // CameraProvider
-        val cameraProvider = cameraProvider
-            ?: throw IllegalStateException("Camera initialization failed.")
-
-        preview = Preview.Builder()
-            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-            .build()
-            .also {
-                it.setSurfaceProvider(viewFinder.surfaceProvider)
-            }
-
-        imageAnalyzer = ImageAnalysis.Builder()
-            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-            .build()
-            .also { analysisUseCase: ImageAnalysis ->
-                analysisUseCase.setAnalyzer(
-                    cameraExecutor,
-                    ImageAnalyzer(
-                        viewFinder,
-                        rotation,
-                        yolov5TFLiteDetector!!,
-                        boxLabelCanvas,
-                        viewModel
-                    )
-                )
-            }
-
-        val cameraSelector =
-            if (cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA))
-                CameraSelector.DEFAULT_BACK_CAMERA else CameraSelector.DEFAULT_FRONT_CAMERA
-
-        try {
-            cameraProvider.unbindAll()
-            val camera = cameraProvider.bindToLifecycle(
-                this, cameraSelector, preview,imageAnalyzer
-            )
-            cameraControl = camera.cameraControl
-            cameraControl.enableTorch(flashFlag)
-            Timber.e("preview " + preview + " ,imageAnalyzer " + imageAnalyzer + " this"+ this +" cameraProvider"+cameraProvider)
-        } catch (exc: Exception) {
-            Timber.e(exc, "Use case binding failed")
-        }
-    }
-
-    private class ImageAnalyzer(
-        val previewView: PreviewView, val rotation: Int,
-        val yolov5TFLiteDetector: Yolov5TFLiteDetector, val boxLabelCanvas: ImageView,val viewModel: CameraViewModel
-    ) :
-        ImageAnalysis.Analyzer {
-        val imageProcess: ImageProcess = ImageProcess()
-
-        class Result(var bitmap: Bitmap)
-
-        override fun analyze(image: ImageProxy) {
-
-            val previewHeight = previewView.height
-            val previewWidth = previewView.width
-
-            Observable.create(ObservableOnSubscribe<Result> { emitter ->
-                Timber.i("previewWidth " + previewWidth + "/" + previewHeight)
-                Timber.e("rotation " + rotation + " ,previewHeight " + previewView.height + " ,previewWidth " + previewView.width)
-
-                val yuvBytes = arrayOfNulls<ByteArray>(3)
-                val planes = image.planes
-                val imageHeight = image.height
-                val imageWidth = image.width
-
-                Timber.e("imageHeight " + image.height + " ,imageWidth " + image.width + " ")
-
-                imageProcess.fillBytes(planes, yuvBytes)
-                val yRowStride = planes[0].rowStride
-                val uvRowStride = planes[1].rowStride
-                val uvPixelStride = planes[1].pixelStride
-                val rgbBytes = IntArray(imageHeight * imageWidth)
-                imageProcess.YUV420ToARGB8888(
-                    yuvBytes[0]!!,
-                    yuvBytes[1]!!,
-                    yuvBytes[2]!!,
-                    imageWidth,
-                    imageHeight,
-                    yRowStride,
-                    uvRowStride,
-                    uvPixelStride,
-                    rgbBytes
-                )
-
-                // Исходное изображение
-                val imageBitmap =
-                    Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
-                imageBitmap.setPixels(rgbBytes, 0, imageWidth, 0, 0, imageWidth, imageHeight)
-
-                Timber.e("imageBitmap H " + imageBitmap.height + " ,imageBitmap W " + imageBitmap.width + " ")
-
-                // Изображение адаптировано к экрану fill_start формат bitmap
-                val scale = Math.max(
-                    previewHeight / (if (rotation % 180 == 0) imageWidth else imageHeight).toDouble(),
-                    previewWidth / (if (rotation % 180 == 0) imageHeight else imageWidth).toDouble()
-                )
-
-                Timber.e("scale  " + scale + " ")
-                val fullScreenTransform = imageProcess.getTransformationMatrix(
-                    imageWidth, imageHeight,
-                    (scale * imageHeight).toInt(), (scale * imageWidth).toInt(),
-                    if (rotation % 180 == 0) 90 else 0, false
-                )
-
-                // Полноразмерное растровое изображение для предварительного просмотра
-                val fullImageBitmap = Bitmap.createBitmap(
-                    imageBitmap,
-                    0,
-                    0,
-                    imageWidth,
-                    imageHeight,
-                    fullScreenTransform,
-                    false
-                )
-                Timber.e("fullImageBitmap H " + fullImageBitmap.height + " ,fullImageBitmap W " + fullImageBitmap.width + " ")
-                // Обрезаем растровое изображение до того же размера, что и предварительный просмотр на экране
-                val cropImageBitmap = Bitmap.createBitmap(
-                    fullImageBitmap, 0, 0,
-                    previewWidth, previewHeight
-                )
-
-                Timber.e("cropImageBitmap H " + cropImageBitmap.height + " ,cropImageBitmap W " + cropImageBitmap.width + " ")
-
-                // Растровое изображение входа модели
-                val previewToModelTransform = imageProcess.getTransformationMatrix(
-                    cropImageBitmap.width, cropImageBitmap.height,
-                    yolov5TFLiteDetector.inputSize.width,
-                    yolov5TFLiteDetector.inputSize.height,
-                    0, false
-                )
-                val modelInputBitmap = Bitmap.createBitmap(
-                    cropImageBitmap, 0, 0,
-                    cropImageBitmap.width, cropImageBitmap.height,
-                    previewToModelTransform, false
-                )
-                val modelToPreviewTransform = Matrix()
-                previewToModelTransform.invert(modelToPreviewTransform)
-                Timber.e("modelInputBitmap H " + modelInputBitmap.height + " ,cropImageBitmap W " + modelInputBitmap.width + " ")
-                val recognitions: ArrayList<Recognition> =
-                    yolov5TFLiteDetector.detect(modelInputBitmap)
-                val emptyCropSizeBitmap =
-                    Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888)
-                Timber.e("emptyCropSizeBitmap H " + emptyCropSizeBitmap.height + " ,cropImageBitmap W " + emptyCropSizeBitmap.width + " ")
-                val cropCanvas = Canvas(emptyCropSizeBitmap)
-                Timber.e("brands " + recognitions)
-//                // Пограничная кисть
-//                val circlePaint = Paint()
-//                circlePaint.isAntiAlias = true
-//                circlePaint.style = Paint.Style.FILL
-//                circlePaint.color = Color.GREEN
-                val boxPaint = Paint()
-                boxPaint.strokeWidth = 5f
-                boxPaint.style = Paint.Style.STROKE
-                boxPaint.color = Color.GREEN
-                // Кисть шрифта
-                val textPain = Paint()
-                textPain.textSize = 50f
-                textPain.color = Color.RED
-                textPain.style = Paint.Style.FILL
-
-                val labelIds = mutableSetOf<Int>()
-                for (res in recognitions) {
-                    val location: RectF = res.getLocation()
-                    val label: String? = res.labelName
-                    val confidence: Float? = res.confidence
-                    labelIds.add(res.labelId)
-                    modelToPreviewTransform.mapRect(location)
-//                    cropCanvas.drawCircle(location.centerX(), location.centerY(), 15f, circlePaint)
-                    cropCanvas.drawRect(location, boxPaint)
-                    cropCanvas.drawText(label + ":" + String.format("%.2f", confidence), location.left, location.top, textPain)
-                }
-                viewModel.getCompany(labelIds.map { it.toString() })
-                labelIds.clear()
-                image.close()
-                emitter.onNext(Result(emptyCropSizeBitmap))
-            })
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { result: Result? ->
-                    boxLabelCanvas.setImageBitmap(result?.bitmap)
-                }
-        }
-    }
-
     private fun showInfoDialogFragment() {
         val dialogFragment = InfoDialogFragment.newInstance()
         dialogFragment.show(childFragmentManager, InfoDialogFragment.TAG)
     }
+
+    companion object {
+
+        private const val ACCURACY_THRESHOLD = 0.5f
+        private const val MODEL_PATH = "model.tflite"
+        private const val LABELS_PATH = "coco_label.txt"
+    }
+
 }
