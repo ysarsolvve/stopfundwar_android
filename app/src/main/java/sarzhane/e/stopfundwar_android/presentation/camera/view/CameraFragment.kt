@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Size
 import android.view.View
-import android.view.ViewGroup
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
@@ -42,7 +41,6 @@ import timber.log.Timber
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.math.min
 
 @AndroidEntryPoint
 class CameraFragment : Fragment(R.layout.fragment_camera) {
@@ -53,8 +51,9 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     private val binding by viewBinding(FragmentCameraBinding::bind)
     private val brandAdapter = BrandAdapter()
     private val viewModel: CameraViewModel by viewModels()
-    lateinit var cameraControl: CameraControl
+    private lateinit var cameraControl: CameraControl
     private var flashFlag: Boolean = false
+    private var pauseAnalysis = false
 
     private lateinit var bitmapBuffer: Bitmap
 
@@ -67,7 +66,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         val cropSize = minOf(bitmapBuffer.width, bitmapBuffer.height)
         Log.d("tfImageProcessor","cropSize $cropSize")
         ImageProcessor.Builder()
-            .add(ResizeWithCropOrPadOp(cropSize, cropSize))
             .add(
                 ResizeOp(
                 tfInputSize.height, tfInputSize.width, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR)
@@ -83,11 +81,17 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
     private val tflite by lazy {
         val options: Interpreter.Options = Interpreter.Options()
-        options.setNumThreads(5)
-        options.setUseNNAPI(true)
+        options.numThreads = 5
+        options.useNNAPI = true
         Interpreter(
             FileUtil.loadMappedFile(requireContext(), MODEL_PATH),
             options)
+    }
+
+    private val tfInputSize by lazy {
+        val inputIndex = 0
+        val inputShape = tflite.getInputTensor(inputIndex).shape()
+        Size(inputShape[2], inputShape[1]) // Order of axis is: {1, height, width, 3}
     }
     private val detector by lazy {
         ObjectDetectionHelper(
@@ -96,10 +100,35 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         )
     }
 
-    private val tfInputSize by lazy {
-        val inputIndex = 0
-        val inputShape = tflite.getInputTensor(inputIndex).shape()
-        Size(inputShape[2], inputShape[1]) // Order of axis is: {1, height, width, 3}
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Timber.i("onCreate()" )
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Timber.i("onViewCreated()" )
+        binding.ivInfo.setOnClickListener { showInfoDialogFragment() }
+        viewModel.searchResult.observe(viewLifecycleOwner, ::handleCompanies)
+        setupReviewsList()
+        setupCameraFlash()
+        pauseAnalysis = false
+    }
+
+    private fun handleCompanies(state: CompaniesResult) {
+        when (state) {
+            is CompaniesResult.SuccessResult -> {
+                binding.rvRecognitions.toVisible()
+                brandAdapter.submitList(state.result)
+            }
+            is CompaniesResult.ErrorResult -> {
+            }
+            is CompaniesResult.EmptyResult -> {
+                binding.rvRecognitions.toVisible()
+            }
+            CompaniesResult.Loading -> TODO()
+        }.exhaustive
     }
 
     override fun onResume() {
@@ -137,28 +166,40 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
             var frameCounter = 0
             var lastFpsTimestamp = System.currentTimeMillis()
-
-            imageAnalysis.setAnalyzer(executor, ImageAnalysis.Analyzer { image ->
+            imageAnalysis.setAnalyzer(executor) { image ->
                 if (!::bitmapBuffer.isInitialized) {
                     // The image rotation and RGB image buffer are initialized only once
                     // the analyzer has started running
                     imageRotationDegrees = image.imageInfo.rotationDegrees
                     bitmapBuffer = Bitmap.createBitmap(
-                        image.width, image.height, Bitmap.Config.ARGB_8888)
+                        image.width, image.height, Bitmap.Config.ARGB_8888
+                    )
                 }
 
+                // Early exit: image analysis is in paused state
+                if (pauseAnalysis) {
+                    image.close()
+                    return@setAnalyzer
+                }
 
                 // Copy out RGB bits to our shared buffer
-                image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer)  }
+                image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
 
                 // Process the image in Tensorflow
-                val tfImage =  tfImageProcessor.process(tfImageBuffer.apply { load(bitmapBuffer) })
+                val tfImage = tfImageProcessor.process(tfImageBuffer.apply { load(bitmapBuffer) })
 
                 // Perform the object detection for the current frame
                 val predictions = detector.predict(tfImage)
 
-                // Report only the top prediction
-                reportPrediction(predictions.maxByOrNull { it.score })
+                val temp = predictions.filter { it.score > ACCURACY_THRESHOLD }
+
+
+                if (!pauseAnalysis) {
+                    reportPrediction(temp)
+                }
+
+                Log.d("Speed", "predictions $predictions")
+
 
                 // Compute the FPS of the entire pipeline
                 val frameCount = 10
@@ -167,10 +208,13 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                     val now = System.currentTimeMillis()
                     val delta = now - lastFpsTimestamp
                     val fps = 1000 * frameCount.toFloat() / delta
-                    Log.d("TAG", "FPS: ${"%.02f".format(fps)} with tensorSize: ${tfImage.width} x ${tfImage.height}")
+                    Log.d(
+                        "TAG",
+                        "FPS: ${"%.02f".format(fps)} with tensorSize: ${tfImage.width} x ${tfImage.height}"
+                    )
                     lastFpsTimestamp = now
                 }
-            })
+            }
 
             // Create a new camera selector each time, enforcing lens facing
             val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
@@ -190,32 +234,50 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     }
 
     private fun reportPrediction(
-        prediction: ObjectDetectionHelper.ObjectPrediction?
-    ) = binding.viewFinder.post {
+        predictions: List<ObjectDetectionHelper.ObjectPrediction>
+    ) {
+        val emptyCropSizeBitmap =
+            Bitmap.createBitmap(binding.viewFinder.width, binding.viewFinder.height, Bitmap.Config.ARGB_8888)
+        val cropCanvas = Canvas(emptyCropSizeBitmap)
+        //                // Пограничная кисть
+//                val circlePaint = Paint()
+//                circlePaint.isAntiAlias = true
+//                circlePaint.style = Paint.Style.FILL
+//                circlePaint.color = Color.GREEN
+        val boxPaint = Paint()
+        boxPaint.strokeWidth = 5f
+        boxPaint.style = Paint.Style.STROKE
+        boxPaint.color = Color.GREEN
+        // Кисть шрифта
+        val textPain = Paint()
+        textPain.textSize = 50f
+        textPain.color = Color.RED
+        textPain.style = Paint.Style.FILL
 
-        // Early exit: if prediction is not good enough, don't report it
-        if (prediction == null || prediction.score < ACCURACY_THRESHOLD) {
-            binding.boxPrediction.visibility = View.GONE
-            binding.textPrediction.visibility = View.GONE
-            return@post
+        val labelIds = mutableSetOf<Int>()
+
+        for (prediction in predictions) {
+            // Location has to be mapped to our local coordinates
+            val location = mapOutputCoordinates(prediction.location)
+            labelIds.add(prediction.labelId)
+            val label: String = prediction.label
+            val confidence: Float = prediction.score
+            cropCanvas.drawRect(location, boxPaint.apply { boxPaint.color = colors.getValue(prediction.labelId) })
+            cropCanvas.drawText(
+                label + ":" + String.format("%.2f", confidence),
+                location.left,
+                location.top,
+                textPain.apply { textPain.color = colors.getValue(prediction.labelId) }
+            )
+//            cropCanvas.drawCircle(location.centerX(), location.centerY(), 15f, circlePaint.apply { circlePaint.color = colors.getValue(prediction.labelId)})
         }
-
-        // Location has to be mapped to our local coordinates
-        val location = mapOutputCoordinates(prediction.location)
-
-        // Update the text and UI
-        binding.textPrediction.text = "${"%.2f".format(prediction.score)} ${prediction.label}"
-        (binding.boxPrediction.layoutParams as ViewGroup.MarginLayoutParams).apply {
-            topMargin = location.top.toInt()
-            leftMargin = location.left.toInt()
-            width = min(binding.viewFinder.width, location.right.toInt() - location.left.toInt())
-            height = min(binding.viewFinder.height, location.bottom.toInt() - location.top.toInt())
-        }
-
-        // Make sure all UI elements are visible
-        binding.boxPrediction.visibility = View.VISIBLE
-        binding.textPrediction.visibility = View.VISIBLE
-
+        viewModel.getCompany(labelIds.map { it.toString() })
+        labelIds.clear()
+        binding.boxLabelCanvas.post(kotlinx.coroutines.Runnable {
+            binding.boxLabelCanvas.setImageBitmap(
+                emptyCropSizeBitmap
+            )
+        })
     }
 
     /**
@@ -233,74 +295,44 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         )
 
         // Step 2: compensate for camera sensor orientation and mirroring
-        val correctedLocation = previewLocation
 
         // Step 3: compensate for 1:1 to 4:3 aspect ratio conversion + small margin
         val margin = 0.1f
         val requestedRatio = 4f / 3f
-        val midX = (correctedLocation.left + correctedLocation.right) / 2f
-        val midY = (correctedLocation.top + correctedLocation.bottom) / 2f
+        val midX = (previewLocation.left + previewLocation.right) / 2f
+        val midY = (previewLocation.top + previewLocation.bottom) / 2f
         return if (binding.viewFinder.width < binding.viewFinder.height) {
             RectF(
-                midX - (1f + margin) * requestedRatio * correctedLocation.width() / 2f,
-                midY - (1f - margin) * correctedLocation.height() / 2f,
-                midX + (1f + margin) * requestedRatio * correctedLocation.width() / 2f,
-                midY + (1f - margin) * correctedLocation.height() / 2f
+                midX - (1f + margin) * requestedRatio * previewLocation.width() / 2f,
+                midY - (1f - margin) * previewLocation.height() / 2f,
+                midX + (1f + margin) * requestedRatio * previewLocation.width() / 2f,
+                midY + (1f - margin) * previewLocation.height() / 2f
             )
         } else {
             RectF(
-                midX - (1f - margin) * correctedLocation.width() / 2f,
-                midY - (1f + margin) * requestedRatio * correctedLocation.height() / 2f,
-                midX + (1f - margin) * correctedLocation.width() / 2f,
-                midY + (1f + margin) * requestedRatio * correctedLocation.height() / 2f
+                midX - (1f - margin) * previewLocation.width() / 2f,
+                midY - (1f + margin) * requestedRatio * previewLocation.height() / 2f,
+                midX + (1f - margin) * previewLocation.width() / 2f,
+                midY + (1f + margin) * requestedRatio * previewLocation.height() / 2f
             )
         }
     }
 
     override fun onDestroyView() {
+        pauseAnalysis = true
+        super.onDestroyView()
+        Timber.i("onDestroyView()" )
+    }
+
+    override fun onDestroy() {
         // Terminate all outstanding analyzing jobs (if there is any).
         executor.apply {
             shutdown()
             awaitTermination(1000, TimeUnit.MILLISECONDS)
         }
-
         // Release TFLite resources.
         tflite.close()
         nnApiDelegate.close()
-        super.onDestroyView()
-        Timber.i("onDestroyView()" )
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Timber.i("onCreate()" )
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Timber.i("onViewCreated()" )
-        binding.ivInfo.setOnClickListener { showInfoDialogFragment() }
-        viewModel.searchResult.observe(viewLifecycleOwner, ::handleCompanies)
-        setupReviewsList()
-        setupCameraFlash()
-    }
-
-    private fun handleCompanies(state: CompaniesResult) {
-        when (state) {
-            is CompaniesResult.SuccessResult -> {
-                binding.rvRecognitions.toVisible()
-                brandAdapter.submitList(state.result)
-            }
-            is CompaniesResult.ErrorResult -> {
-            }
-            is CompaniesResult.EmptyResult -> {
-                binding.rvRecognitions.toVisible()
-            }
-            CompaniesResult.Loading -> TODO()
-        }.exhaustive
-    }
-
-    override fun onDestroy() {
         super.onDestroy()
         Timber.i("onDestroy()" )
     }
@@ -326,5 +358,62 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         private const val MODEL_PATH = "model.tflite"
         private const val LABELS_PATH = "coco_label.txt"
     }
+
+    private val colors = mapOf(
+        0	to	-256,
+        1	to	-16711936,
+        2	to	-16711936,
+        3	to	-65536,
+        4	to	-65536,
+        5	to	-16711936,
+        6	to	-16711936,
+        7	to	-16711936,
+        8	to	-16711936,
+        9	to	-16711936,
+        10	to	-16711936,
+        11	to	-16711936,
+        12	to	-16711936,
+        13	to	-16711936,
+        14	to	-16711936,
+        15	to	-16711936,
+        16	to	-16711936,
+        17	to	-16711936,
+        18	to	-16711936,
+        19	to	-16711936,
+        20	to	-16711936,
+        21	to	-16711936,
+        22	to	-16711936,
+        23	to	-16711936,
+        24	to	-16711936,
+        25	to	-16711936,
+        26	to	-16711936,
+        27	to	-16711936,
+        28	to	-16711936,
+        29	to	-16711936,
+        30	to	-16711936,
+        31	to	-16711936,
+        32	to	-16711936,
+        33	to	-16711936,
+        34	to	-16711936,
+        35	to	-16711936,
+        36	to	-16711936,
+        37	to	-16711936,
+        38	to	-16711936,
+        39	to	-16711936,
+        40	to	-16711936,
+        41	to	-16711936,
+        42	to	-7829368,
+        43	to	-7829368,
+        44	to	-7829368,
+        45	to	-7829368,
+        46	to	-7829368,
+        47	to	-7829368,
+        48	to	-7829368,
+        49	to	-7829368,
+        50	to	-7829368,
+        51	to	-7829368
+
+
+    )
 
 }

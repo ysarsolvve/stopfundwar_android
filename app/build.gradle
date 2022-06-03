@@ -112,12 +112,8 @@ dependencies {
     implementation "androidx.activity:activity-ktx:1.4.0"
 
     // Import tflite dependencies
-    // implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly-SNAPSHOT'
     implementation 'org.tensorflow:tensorflow-lite:2.9.0'
-    // The GPU delegate library is optional. Depend on it as needed.
-    // implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly-SNAPSHOT'
     implementation 'org.tensorflow:tensorflow-lite-gpu:2.8.0'
-    // implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly-SNAPSHOT'
     implementation 'org.tensorflow:tensorflow-lite-support:0.3.1'
     implementation 'org.tensorflow:tensorflow-lite-metadata:0.3.1'
 

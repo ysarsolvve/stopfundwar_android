@@ -27,7 +27,7 @@ import org.tensorflow.lite.support.image.TensorImage
 class ObjectDetectionHelper(private val tflite: Interpreter, private val labels: List<String>) {
 
     /** Abstraction object that wraps a prediction output in an easy to parse way */
-    data class ObjectPrediction(val location: RectF, val label: String, val score: Float)
+    data class ObjectPrediction(val location: RectF, val label: String, val score: Float, val labelId: Int,)
 
     private val locations = arrayOf(Array(OBJECT_COUNT) { FloatArray(4) })
     private val labelIndices =  arrayOf(FloatArray(OBJECT_COUNT))
@@ -40,7 +40,7 @@ class ObjectDetectionHelper(private val tflite: Interpreter, private val labels:
         3 to labelIndices
     )
 
-    val predictions get() = (0 until OBJECT_COUNT).map {
+    private val predictions get() = (0 until OBJECT_COUNT).map {
         ObjectPrediction(
 
             // The locations are an array of [0, 1] floats for [top, left, bottom, right]
@@ -54,12 +54,14 @@ class ObjectDetectionHelper(private val tflite: Interpreter, private val labels:
             label = labels[ labelIndices[0][it].toInt()],
 
             // Score is a single value of [0, 1]
-            score = scores[0][it]
+            score = scores[0][it],
+
+            labelId = labelIndices[0][it].toInt()
         )
     }
 
     fun predict(image: TensorImage): List<ObjectPrediction> {
-Log.d("Speed","start")
+        Log.d("Speed","start")
         tflite.runForMultipleInputsOutputs(arrayOf(image.buffer), outputBuffer)
         Log.d("Speed","finish")
         return predictions

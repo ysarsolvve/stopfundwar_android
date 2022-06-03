@@ -21,6 +21,7 @@ interface CompaniesDao {
     @Query("""
         SELECT *
         FROM ${CompanyEntity.TABLE_NAME}
+        WHERE ${CompanyEntity.BRAND_NAME} IS NOT NULL
         ORDER BY ${CompanyEntity.BRAND_NAME} ASC
         """)
     suspend fun getData(): List<CompanyEntity>
