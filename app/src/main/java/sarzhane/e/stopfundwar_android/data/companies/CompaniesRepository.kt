@@ -34,7 +34,9 @@ class CompaniesRepositoryImpl @Inject constructor(
 
     override suspend fun getAllCompanies() {
         val companyEntities =
-            companiesRemoteDataSource.getCompanies().map { company -> company.toEntity() }
+            companiesRemoteDataSource.getCompanies()
+                .filterNot { companyModel -> companyModel.brandName.isNullOrBlank() }
+                .map { company -> company.toEntity() }
         Log.d("Response", "companyEntities ${companyEntities}")
         companiesLocalDataSource.deleteAll()
         companiesLocalDataSource.insertAll(companyEntities)

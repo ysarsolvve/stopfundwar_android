@@ -30,7 +30,7 @@ class CompaniesViewHolder(
 
     private fun setStatusColor(brand: String?) {
         when (brand) {
-            "D" -> {
+            "B" -> {
                 binding.tvStatus.setTextColor(Color.parseColor("#288818"))
                 binding.tvStatus.background = ResourcesCompat.getDrawable(
                     binding.root.resources,
@@ -48,7 +48,7 @@ class CompaniesViewHolder(
                 )
                 binding.tvStatus.setPadding(8)
             }
-            "F" -> {
+            "F","D" -> {
                 binding.tvStatus.setTextColor(Color.parseColor("#CF2424"))
                 binding.tvStatus.background = ResourcesCompat.getDrawable(
                     binding.root.resources,

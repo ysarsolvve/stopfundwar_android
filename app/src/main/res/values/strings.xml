@@ -10,4 +10,23 @@
     <string name="chip_suspension">Suspension</string>
     <string name="chip_withdrawal">Withdrawal</string>
     <string name="chip_ukrainian">Ukrainian</string>
+    <string name="charity_for_ukraine">Charity for Ukraine</string>
+    <string name="national_bank_of_ukraine">National Bank of Ukraine</string>
+    <string name="come_back_alive">Come back alive</string>
+    <string name="army_sos">Army SOS</string>
+    <string name="monobank">Monobank</string>
+    <string name="nova_poshta">Nova Poshta</string>
+    <string name="unicef">UNICEF</string>
+    <string name="voices">Voices</string>
+    <string name="charitable_foundation_of_sergii_pritula">Charitable Foundation of Sergii Pritula</string>
+    <string name="lions_on_the_suv">Lions on the SUV</string>
+    <string name="the_national_bank_description">The National Bank of Ukraine has decided to open a special fundraising account to support the Armed Forces of Ukraine.</string>
+    <string name="support_ukrainian_army_description">Support Ukrainian army with vehicles</string>
+    <string name="support_ukrainian_defenders_description">Support Ukrainian Defenders of Freedom</string>
+    <string name="help_ukraine_in_the_war_description">Help Ukraine in the war with Russia. Glory to Ukraine!</string>
+    <string name="nova_poshta_description">Nova Poshta delivers humanitarian goods across Ukraine and abroad to support the army and territorial defense.</string>
+    <string name="donate_to_protect_children_in_ukraine">Donate to protect children in Ukraine</string>
+    <string name="help_the_children">Help the children</string>
+    <string name="serhiy_prytula_description">Serhiy Prytula has been helping the Ukrainian Army as a private volunteer since Russia occupied Crimea and Donbas in 2014.</string>
+    <string name="volunteer_group_description">Volunteer group that helps the military with equipment</string>
 </resources>

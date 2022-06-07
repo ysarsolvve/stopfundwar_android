@@ -5,13 +5,13 @@
     <item
         android:id="@+id/companiesFragment"
         android:icon="@drawable/companies"
-        tools:ignore="MenuTitle" />
+        android:title="List" />
     <item
         android:id="@+id/cameraFragment"
         android:icon="@drawable/camera"
-        tools:ignore="MenuTitle" />
+        android:title="Scan"  />
     <item
         android:id="@+id/charityFragment"
         android:icon="@drawable/charity"
-        tools:ignore="MenuTitle" />
+        android:title="Charity"  />
 </menu>

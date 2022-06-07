@@ -1,13 +1,11 @@
 package sarzhane.e.stopfundwar_android.presentation.onboarding
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
@@ -15,11 +13,9 @@ import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import sarzhane.e.stopfundwar_android.R
-import sarzhane.e.stopfundwar_android.core.navigation.HomeScreen
 import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
 import sarzhane.e.stopfundwar_android.databinding.FragmentViewPagerBinding
-import sarzhane.e.stopfundwar_android.presentation.splash.view.SplashFragment
 import javax.inject.Inject
 
 
@@ -48,18 +44,19 @@ class ViewPagerFragment : Fragment(R.layout.fragment_view_pager) {
             listOf(
                 OnboardingItem(
                     onboardingImage = R.drawable.first,
-                    title = "Everyday Ukrainians are dying",
-                    description = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore."
+                    title = "Every day Civilians \n" +
+                            "are dying in Ukraine",
+                    description = "We do not support brands that help Russian aggression"
                 ),
                 OnboardingItem(
                     onboardingImage = R.drawable.second,
                     title = "Every day Russia sends new troops",
-                    description = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod."
+                    description = "Our app was created to destroy Russia’s economy"
                 ),
                 OnboardingItem(
                     onboardingImage = R.drawable.third,
-                    title = "Help fall Russia's economy faster",
-                    description = "Say NO to Putin, say NO to all companies, that supports war in Ukraine"
+                    title = "Help the Russian economy to collapse faster",
+                    description = "Make your own decision whether to buy brands that support war."
                 )
 
             )

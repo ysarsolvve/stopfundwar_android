@@ -57,7 +57,7 @@
                     android:text="@string/chip_digging_in"/>
 
                 <com.google.android.material.chip.Chip
-                    style="@style/CustomGreenChipStyle"
+                    style="@style/CustomRedChipStyle"
                     android:id="@+id/chipBuyingTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -103,9 +103,11 @@
     </HorizontalScrollView>
 
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/searchInput"
         style="@style/SearchStyle"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
         android:drawableStart="@drawable/search_loop"
         android:drawablePadding="10dp"
         android:paddingStart="12dp"
