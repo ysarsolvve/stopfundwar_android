@@ -46,7 +46,7 @@ interface CompaniesDao {
         LIKE (:filter)
         ORDER BY ${CompanyEntity.BRAND_NAME} ASC
         """)
-    suspend fun getCompanies(searchQuery: String, filter: String): List<CompanyEntity>
+    suspend fun getDataBySearchAndFilter(searchQuery: String, filter: String): List<CompanyEntity>
 
     @Query("""
         SELECT *
@@ -55,7 +55,7 @@ interface CompaniesDao {
         LIKE :searchQuery
         ORDER BY ${CompanyEntity.BRAND_NAME} ASC
         """)
-    suspend fun getCompaniesWithoutFilter(searchQuery: String): List<CompanyEntity>
+    suspend fun getDataWithoutFilter(searchQuery: String): List<CompanyEntity>
 
     @Query("""
         SELECT *

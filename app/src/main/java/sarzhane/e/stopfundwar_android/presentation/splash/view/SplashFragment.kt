@@ -12,6 +12,7 @@ import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
 import sarzhane.e.stopfundwar_android.core.navigation.ViewPagerScreen
 import sarzhane.e.stopfundwar_android.presentation.splash.viewmodel.SplashViewModel
+import sarzhane.e.stopfundwar_android.util.observe
 
 import javax.inject.Inject
 

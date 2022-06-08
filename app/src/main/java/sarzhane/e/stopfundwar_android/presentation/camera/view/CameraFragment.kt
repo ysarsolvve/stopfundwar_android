@@ -1,7 +1,6 @@
 package sarzhane.e.stopfundwar_android.presentation.camera.view
 
 
-
 import android.annotation.SuppressLint
 import android.graphics.*
 import android.os.Bundle
@@ -64,18 +63,19 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
     private val tfImageProcessor by lazy {
         val cropSize = minOf(bitmapBuffer.width, bitmapBuffer.height)
-        Log.d("tfImageProcessor","cropSize $cropSize")
+        Log.d("tfImageProcessor", "cropSize $cropSize")
         ImageProcessor.Builder()
             .add(
                 ResizeOp(
-                tfInputSize.height, tfInputSize.width, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR)
+                    tfInputSize.height, tfInputSize.width, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR
+                )
             )
             .add(Rot90Op(-imageRotationDegrees / 90))
             .add(NormalizeOp(127.5f, 127.5f))
             .build()
     }
 
-    private val nnApiDelegate by lazy  {
+    private val nnApiDelegate by lazy {
         NnApiDelegate()
     }
 
@@ -85,7 +85,8 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         options.useNNAPI = true
         Interpreter(
             FileUtil.loadMappedFile(requireContext(), MODEL_PATH),
-            options)
+            options
+        )
     }
 
     private val tfInputSize by lazy {
@@ -108,13 +109,14 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Timber.i("onViewCreated()" )
+        Timber.i("onViewCreated()")
         binding.ivInfo.setOnClickListener { showInfoDialogFragment() }
         viewModel.searchResult.observe(viewLifecycleOwner, ::handleCompanies)
         setupReviewsList()
         setupCameraFlash()
         pauseAnalysis = false
     }
+
 
     private fun handleCompanies(state: CompaniesResult) {
         when (state) {
@@ -135,7 +137,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         super.onResume()
         if (!PermissionsFragment.hasPermissions(requireContext())) {
             navigator.navigateTo(screen = PermissionsScreen(), addToBackStack = false)
-        }else {
+        } else {
             bindCameraUseCases()
         }
     }
@@ -145,7 +147,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     private fun bindCameraUseCases() = binding.viewFinder.post {
 
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-        cameraProviderFuture.addListener ({
+        cameraProviderFuture.addListener({
 
             // Camera provider is now guaranteed to be available
             val cameraProvider = cameraProviderFuture.get()
@@ -222,7 +224,8 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
             // Apply declared configs to CameraX using the same lifecycle owner
             cameraProvider.unbindAll()
             val camera = cameraProvider.bindToLifecycle(
-                this as LifecycleOwner, cameraSelector, preview, imageAnalysis)
+                this as LifecycleOwner, cameraSelector, preview, imageAnalysis
+            )
 
             cameraControl = camera.cameraControl
             cameraControl.enableTorch(flashFlag)
@@ -237,7 +240,11 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         predictions: List<ObjectDetectionHelper.ObjectPrediction>
     ) {
         val emptyCropSizeBitmap =
-            Bitmap.createBitmap(binding.viewFinder.width, binding.viewFinder.height, Bitmap.Config.ARGB_8888)
+            Bitmap.createBitmap(
+                binding.viewFinder.width,
+                binding.viewFinder.height,
+                Bitmap.Config.ARGB_8888
+            )
         val cropCanvas = Canvas(emptyCropSizeBitmap)
         //                // Пограничная кисть
 //                val circlePaint = Paint()
@@ -321,7 +328,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     override fun onDestroyView() {
         pauseAnalysis = true
         super.onDestroyView()
-        Timber.i("onDestroyView()" )
+        Timber.i("onDestroyView()")
     }
 
     override fun onDestroy() {
@@ -334,12 +341,13 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         tflite.close()
         nnApiDelegate.close()
         super.onDestroy()
-        Timber.i("onDestroy()" )
+        Timber.i("onDestroy()")
     }
 
     private fun setupReviewsList() {
         binding.rvRecognitions.adapter = brandAdapter
     }
+
     private fun setupCameraFlash() {
         binding.ivFlash.setOnClickListener {
             flashFlag = !flashFlag

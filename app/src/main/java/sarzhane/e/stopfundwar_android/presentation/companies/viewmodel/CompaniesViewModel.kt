@@ -32,7 +32,7 @@ class CompaniesViewModel @Inject constructor(
                getDataByFilter(filter)
            }
            else {
-               getCompanies(query, filter)
+               getDataBySearchAndFilter(query, filter)
            }
        }
     }
@@ -42,8 +42,9 @@ class CompaniesViewModel @Inject constructor(
         get() = _searchResult
             .asLiveData(viewModelScope.coroutineContext)
 
-    private suspend fun getCompanies(searchQuery: String, filter: String){
-        val result = companiesRepository.getCompanies(searchQuery, filter)
+
+    private suspend fun getDataBySearchAndFilter(searchQuery: String, filter: String){
+        val result = companiesRepository.getDataBySearchAndFilter(searchQuery, filter)
         if (result.isNotEmpty())_searchResult.value = SuccessResult(result)
         else _searchResult.value = EmptyResult
     }

@@ -18,8 +18,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:gravity="center"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
+        android:textSize="28sp"
+        android:fontFamily="@font/raleway700"
+        android:textColor="@color/black"/>
 
     <TextView
         android:id="@+id/textDescription"
@@ -29,6 +30,8 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="30dp"
         android:gravity="center"
-        android:textSize="16sp" />
+        android:fontFamily="@font/raleway500"
+        android:textColor="@color/onboarding_grey"
+        android:textSize="14sp" />
 
 </LinearLayout>
