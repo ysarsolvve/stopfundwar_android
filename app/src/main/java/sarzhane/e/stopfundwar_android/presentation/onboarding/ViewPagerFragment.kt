@@ -46,17 +46,23 @@ class ViewPagerFragment : Fragment(R.layout.fragment_view_pager) {
                     onboardingImage = R.drawable.first,
                     title = "Every day Civilians \n" +
                             "are dying in Ukraine",
-                    description = "We do not support brands that help Russian aggression"
+                    description = "We do not support brands that help\n"+
+                            " Russian aggression"
                 ),
                 OnboardingItem(
                     onboardingImage = R.drawable.second,
-                    title = "Every day Russia sends new troops",
-                    description = "Our app was created to destroy Russia’s economy"
+                    title = "Every day Russia\n" +
+                            "sends new troops",
+                    description = "Our app was created to destroy\n" +
+                            " Russia’s economy"
                 ),
                 OnboardingItem(
                     onboardingImage = R.drawable.third,
-                    title = "Help the Russian economy to collapse faster",
-                    description = "Make your own decision whether to buy brands that support war."
+                    title = "Help the Russian\n" +
+                            " economy to collapse\n" +
+                            "faster",
+                    description = "Make your own decision whether to\n" +
+                            " buy brands that support war."
                 )
 
             )
