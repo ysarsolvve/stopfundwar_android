@@ -217,7 +217,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                     lastFpsTimestamp = now
                 }
             }
-
             // Create a new camera selector each time, enforcing lens facing
             val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
 
