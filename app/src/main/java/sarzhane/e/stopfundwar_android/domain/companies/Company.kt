@@ -5,9 +5,24 @@ package sarzhane.e.stopfundwar_android.domain.companies
  */
 data class Company(
     val id: String? = "",
-    val brandName: String? = "",
+    var brandName: String? = "",
     val logo: String? = "",
     val statusInfo: String? = "",
     val statusRate: String? = "",
     val description: String? = ""
 )
+
+sealed class DataModel {
+    data class Header(
+        val title: String
+    ) : DataModel()
+
+    data class Company(
+        val id: String? = "",
+        var brandName: String? = "",
+        val logo: String? = "",
+        val statusInfo: String? = "",
+        val statusRate: String? = "",
+        val description: String? = ""
+    ) : DataModel()
+}

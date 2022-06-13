@@ -1,6 +1,7 @@
 package sarzhane.e.stopfundwar_android.presentation.companies.view
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -9,6 +10,8 @@ import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.databinding.FragmentCompaniesBinding
+import sarzhane.e.stopfundwar_android.domain.companies.Company
+import sarzhane.e.stopfundwar_android.domain.companies.DataModel
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult
 import sarzhane.e.stopfundwar_android.presentation.companies.viewmodel.CompaniesViewModel
 import sarzhane.e.stopfundwar_android.util.afterTextChanged
@@ -41,7 +44,7 @@ class CompaniesFragment : Fragment(R.layout.fragment_companies) {
     private fun handleCompanies(state: CompaniesResult) {
         when (state) {
             is CompaniesResult.SuccessResult -> {
-                companiesAdapter.submitList(state.result)
+                companiesAdapter.submitList(sortAlphabetList(state.result))
             }
             is CompaniesResult.ErrorResult -> {
             }
@@ -49,6 +52,49 @@ class CompaniesFragment : Fragment(R.layout.fragment_companies) {
             }
             CompaniesResult.Loading -> TODO()
         }.exhaustive
+    }
+
+    private fun sortAlphabetList(list: List<Company>): List<DataModel> {
+        val localList = mutableListOf<DataModel>()
+        for (item in list.indices) {
+            if (item == 0) {
+                localList.add( DataModel.Header(list[item].brandName?.substring(0, 1)!!))
+                localList.add(DataModel.Company(
+                    list[item].id,
+                    list[item].brandName,
+                    list[item].logo,
+                    list[item].statusInfo,
+                    list[item].statusRate,
+                    list[item].description
+                ))
+            } else {
+                val groupName = list[item].brandName?.substring(0, 1)
+                val preGroupName = list[item - 1].brandName?.substring(0, 1)
+                if (!TextUtils.equals(groupName, preGroupName)) {
+                    localList.add(DataModel.Header(list[item].brandName?.substring(0, 1)!!))
+                    localList.add(DataModel.Company(
+                        list[item].id,
+                        list[item].brandName,
+                        list[item].logo,
+                        list[item].statusInfo,
+                        list[item].statusRate,
+                        list[item].description
+                    ))
+                } else {
+                    localList.add(
+                        DataModel.Company(
+                            list[item].id,
+                            list[item].brandName,
+                            list[item].logo,
+                            list[item].statusInfo,
+                            list[item].statusRate,
+                            list[item].description
+                        )
+                    )
+                }
+            }
+        }
+        return localList
     }
 
     private fun setupCompaniesList() {

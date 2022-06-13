@@ -10,7 +10,7 @@ import androidx.transition.TransitionManager
 import com.squareup.picasso.Picasso
 import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.databinding.ItemCompanyBinding
-import sarzhane.e.stopfundwar_android.domain.companies.Company
+import sarzhane.e.stopfundwar_android.domain.companies.DataModel
 
 
 class CompaniesViewHolder(
@@ -18,7 +18,7 @@ class CompaniesViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
 
-    fun bind(brand: Company) {
+    fun bind(brand: DataModel.Company) {
         var isViewExpanded = true
         itemView.setOnClickListener {
             val smallItemConstraint = ConstraintSet()
