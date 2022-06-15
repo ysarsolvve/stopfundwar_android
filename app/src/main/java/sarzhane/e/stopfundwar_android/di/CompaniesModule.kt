@@ -10,6 +10,7 @@ import sarzhane.e.stopfundwar_android.data.companies.local.CompaniesLocalDataSou
 import sarzhane.e.stopfundwar_android.data.companies.local.CompaniesLocalDataSourceImpl
 import sarzhane.e.stopfundwar_android.data.companies.remote.CompaniesRemoteDataSource
 import sarzhane.e.stopfundwar_android.data.companies.remote.CompaniesRemoteDataSourceImpl
+import javax.inject.Singleton
 
 
 @Module
@@ -27,6 +28,7 @@ interface CompaniesModule {
     ): CompaniesLocalDataSource
 
     @Binds
+    @Singleton
     fun bindCompaniesRepository(
         impl: CompaniesRepositoryImpl,
     ): CompaniesRepository

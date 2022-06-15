@@ -1,16 +1,10 @@
 package sarzhane.e.stopfundwar_android.data.companies
 
 
-import android.graphics.Color
 import android.util.Log
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.setPadding
-import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.data.companies.local.CompaniesLocalDataSource
-import sarzhane.e.stopfundwar_android.data.companies.local.CompanyEntity
 import sarzhane.e.stopfundwar_android.data.companies.remote.CompaniesRemoteDataSource
 import sarzhane.e.stopfundwar_android.domain.companies.Company
-import java.util.concurrent.atomic.AtomicReference
 
 
 import javax.inject.Inject
@@ -20,6 +14,8 @@ interface CompaniesRepository {
     suspend fun getAllCompanies()
 
     suspend fun getData(): List<Company>
+
+    suspend fun getColorMap(): Map<Int,Int>
 
     suspend fun getDataByFilter(filter: String): List<Company>
 
@@ -35,7 +31,7 @@ class CompaniesRepositoryImpl @Inject constructor(
     private val companiesLocalDataSource: CompaniesLocalDataSource,
 ) : CompaniesRepository {
 
-    private val colorMap = AtomicReference<HashMap<String, Int>>()
+    private val map = mutableMapOf<Int,Int>()
 
     override suspend fun getAllCompanies() {
         val companyEntities =
@@ -45,11 +41,27 @@ class CompaniesRepositoryImpl @Inject constructor(
         Log.d("Response", "companyEntities ${companyEntities}")
         companiesLocalDataSource.deleteAll()
         companiesLocalDataSource.insertAll(companyEntities)
+        val companies = companiesLocalDataSource.getData().map { it.toModel() }
+        for (company in companies){
+            when(company.statusRate) {
+                "A","B" -> {
+                    map[company.id!!.toInt()] = -16711936
+                }
+                "C" -> {
+                    map[company.id!!.toInt()] = -3768038
+                }
+                "F","D" -> {
+                    map[company.id!!.toInt()] = -65536
+                }
+            }
+        }
 }
 
     override suspend fun getData(): List<Company> {
         return companiesLocalDataSource.getData().map { it.toModel() }
     }
+
+    override suspend fun getColorMap(): Map<Int, Int> = map
 
     override suspend fun getDataByFilter(filter: String): List<Company> {
         return companiesLocalDataSource.getDataByFilter(filter).map { it.toModel() }

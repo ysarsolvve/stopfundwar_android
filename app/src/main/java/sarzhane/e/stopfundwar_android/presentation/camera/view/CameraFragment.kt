@@ -44,6 +44,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CameraFragment : Fragment(R.layout.fragment_camera) {
 
+
     @Inject
     lateinit var navigator: Navigator
 
@@ -60,6 +61,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var imageRotationDegrees: Int = 0
     private val tfImageBuffer = TensorImage(DataType.FLOAT32)
+    private var colors = mapOf<Int,Int>()
 
     private val tfImageProcessor by lazy {
         val cropSize = minOf(bitmapBuffer.width, bitmapBuffer.height)
@@ -104,7 +106,8 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.i("onCreate()" )
-
+        colors = viewModel.getColors()
+        Log.d("Response", "mapColors in CameraFragment${colors}")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -369,62 +372,5 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         private const val MODEL_PATH = "model.tflite"
         private const val LABELS_PATH = "coco_label.txt"
     }
-
-    private val colors = mapOf(
-        0	to	-256,
-        1	to	-65536,
-        2	to	-65536,
-        3	to	-65536,
-        4	to	-65536,
-        5	to	-65536,
-        6	to	-65536,
-        7	to	-65536,
-        8	to	-65536,
-        9	to	-65536,
-        10	to	-65536,
-        11	to	-65536,
-        12	to	-65536,
-        13	to	-65536,
-        14	to	-65536,
-        15	to	-65536,
-        16	to	-65536,
-        17	to	-65536,
-        18	to	-65536,
-        19	to	-65536,
-        20	to	-65536,
-        21	to	-65536,
-        22	to	-65536,
-        23	to	-65536,
-        24	to	-65536,
-        25	to	-65536,
-        26	to	-65536,
-        27	to	-65536,
-        28	to	-65536,
-        29	to	-65536,
-        30	to	-65536,
-        31	to	-65536,
-        32	to	-65536,
-        33	to	-65536,
-        34	to	-65536,
-        35	to	-65536,
-        36	to	-65536,
-        37	to	-65536,
-        38	to	-65536,
-        39	to	-65536,
-        40	to	-65536,
-        41	to	-65536,
-        42	to	-7829368,
-        43	to	-7829368,
-        44	to	-7829368,
-        45	to	-7829368,
-        46	to	-7829368,
-        47	to	-7829368,
-        48	to	-7829368,
-        49	to	-7829368,
-        50	to	-7829368,
-        51	to	-7829368
-
-
-    )
 
 }

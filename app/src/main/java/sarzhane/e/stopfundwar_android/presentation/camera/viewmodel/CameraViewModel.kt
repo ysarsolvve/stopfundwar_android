@@ -31,6 +31,17 @@ class CameraViewModel @Inject constructor(
         }
     }
 
+    fun getColors(): Map<Int, Int> {
+        var map = mapOf<Int,Int>()
+        viewModelScope.launch {
+            map = getColorMap()
+        }
+        return map
+    }
+    private suspend fun getColorMap(): Map<Int, Int> {
+        return companiesRepository.getColorMap()
+    }
+
     private suspend fun getCompaniesByIds(ids: List<String>){
         val result = companiesRepository.getDataByIds(ids)
         Log.d("response", "${result}")
