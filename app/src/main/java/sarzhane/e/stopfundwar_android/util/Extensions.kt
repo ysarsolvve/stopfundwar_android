@@ -3,14 +3,21 @@ package sarzhane.e.stopfundwar_android.util
 import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.DisplayMetrics
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.StringRes
+import androidx.annotation.*
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 
@@ -66,3 +73,31 @@ fun View.toVisible() {
 
 val <T> T.exhaustive: T
     get() = this
+
+@JvmOverloads @Dimension(unit = Dimension.PX) fun Number.dpToPx(
+    metrics: DisplayMetrics = Resources.getSystem().displayMetrics
+): Float {
+    return toFloat() * metrics.density
+}
+
+@JvmOverloads @Dimension(unit = Dimension.DP) fun Number.pxToDp(
+    metrics: DisplayMetrics = Resources.getSystem().displayMetrics
+): Float {
+    return toFloat() / metrics.density
+}
+
+fun DialogFragment.setWidthPercent(percentage: Int) {
+    val percent = percentage.toFloat() / 100
+    val dm = Resources.getSystem().displayMetrics
+    val rect = dm.run { Rect(0, 0, widthPixels, heightPixels) }
+    val percentWidth = rect.width() * percent
+    dialog?.window?.setLayout(percentWidth.toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+}
+
+/**
+ * Call this method (in onActivityCreated or later)
+ * to make the dialog near-full screen.
+ */
+fun DialogFragment.setFullScreen() {
+    dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+}

@@ -1,24 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools">
+
+<androidx.appcompat.widget.AppCompatImageView
+    android:id="@+id/imageOnboarding"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="top"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:scaleType="fitCenter"
+    android:contentDescription="@string/app_name"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toTopOf="@id/guideline"
+    tools:src="@drawable/first"/>
 
-    <ImageView
-        android:id="@+id/imageOnboarding"
-        android:layout_width="300dp"
-        android:layout_height="332dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/app_name"/>
+<androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.55" />
 
-    <TextView
-        android:id="@+id/textTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
-        android:gravity="center"
-        android:textSize="28sp"
-        android:fontFamily="@font/raleway700"/>
+<TextView
+    android:id="@+id/textTitle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="50dp"
+    android:gravity="center"
+    android:textSize="28sp"
+    android:fontFamily="@font/raleway700"
+    android:textColor="@color/black"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="@id/guideline"/>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

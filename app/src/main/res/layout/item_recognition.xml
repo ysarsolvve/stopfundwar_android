@@ -61,7 +61,7 @@
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/space_medium"
+            tools:padding="@dimen/space_medium"
             tools:text="Digging In"
             tools:background="@drawable/rounded_corner_orange"
             android:textSize="14sp"

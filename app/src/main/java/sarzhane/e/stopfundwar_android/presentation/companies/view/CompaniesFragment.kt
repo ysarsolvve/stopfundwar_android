@@ -16,6 +16,11 @@ import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesRes
 import sarzhane.e.stopfundwar_android.presentation.companies.viewmodel.CompaniesViewModel
 import sarzhane.e.stopfundwar_android.util.afterTextChanged
 import sarzhane.e.stopfundwar_android.util.exhaustive
+import sarzhane.e.stopfundwar_android.util.fastsroll.FastScrollItemIndicator
+import sarzhane.e.stopfundwar_android.util.fastsroll.FastScrollerView
+import sarzhane.e.stopfundwar_android.util.toGone
+import sarzhane.e.stopfundwar_android.util.toVisible
+import java.util.*
 
 
 @AndroidEntryPoint
@@ -25,6 +30,7 @@ class CompaniesFragment : Fragment(R.layout.fragment_companies) {
     private val viewModel: CompaniesViewModel by viewModels()
     private val companiesAdapter = CompaniesAdapter()
     private var filter = "All"
+    private var isInitialize = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -39,12 +45,24 @@ class CompaniesFragment : Fragment(R.layout.fragment_companies) {
             viewModel.onNewQuery(searchInput, selectedStatusType)
             filter = selectedStatusType
         }
+        binding.sampleBasicFastscrollerThumb.apply {
+            setupWithFastScroller(binding.sampleBasicFastscroller)
+        }
     }
 
     private fun handleCompanies(state: CompaniesResult) {
         when (state) {
             is CompaniesResult.SuccessResult -> {
-                companiesAdapter.submitList(sortAlphabetList(state.result))
+                val sortedList = sortAlphabetList(state.result)
+                if (sortedList.size< 10){
+                    binding.sampleBasicFastscroller.toGone()
+                    binding.sampleBasicFastscrollerThumb.toGone()
+                }else{
+                    binding.sampleBasicFastscroller.toVisible()
+                    binding.sampleBasicFastscrollerThumb.toVisible()
+                }
+                companiesAdapter.submitList(sortedList)
+                setUpFastScrollView(sortedList)
             }
             is CompaniesResult.ErrorResult -> {
             }
@@ -52,6 +70,32 @@ class CompaniesFragment : Fragment(R.layout.fragment_companies) {
             }
             CompaniesResult.Loading -> TODO()
         }.exhaustive
+    }
+
+    private fun setUpFastScrollView(sortedList: List<DataModel>){
+        if (isInitialize)return
+        binding.sampleBasicFastscroller.apply {
+            setupWithRecyclerView(
+                binding.companiesList,
+                { position ->
+                    sortedList[position]
+                        .let { item ->
+                            when (item) {
+                                is DataModel.Header -> FastScrollItemIndicator.Text(item.title)
+                                is DataModel.Company ->
+                                    FastScrollItemIndicator.Text(
+                                        item.let {
+                                            it.brandName!!
+                                                .substring(0, 1)
+                                                .toUpperCase(Locale.ROOT)
+                                        }
+                                    )
+                            }
+                        }
+                }
+            )
+        }
+        isInitialize = true
     }
 
     private fun sortAlphabetList(list: List<Company>): List<DataModel> {

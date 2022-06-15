@@ -1,5 +1,6 @@
 package sarzhane.e.stopfundwar_android.presentation.companies.view
 
+import android.content.Context
 import android.graphics.Color
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -11,6 +12,7 @@ import com.squareup.picasso.Picasso
 import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.databinding.ItemCompanyBinding
 import sarzhane.e.stopfundwar_android.domain.companies.DataModel
+import sarzhane.e.stopfundwar_android.util.dpToPx
 
 
 class CompaniesViewHolder(
@@ -63,6 +65,7 @@ class CompaniesViewHolder(
 
     private fun setStatus(brand: String?) {
         binding.tvStatus.text = brand
+        binding.tvStatus.setPadding(16)
     }
     private fun setDescription(brand: String?) {
         binding.tvDescription.text = brand
@@ -76,6 +79,8 @@ class CompaniesViewHolder(
     }
 
     private fun setStatusColor(brand: String?) {
+        val padding:Number = 8
+        val paddingInPx = padding.dpToPx().toInt()
         when (brand) {
             "A","B" -> {
                 binding.tvStatus.setTextColor(Color.parseColor("#288818"))
@@ -85,7 +90,7 @@ class CompaniesViewHolder(
                     null
                 )
                 binding.tvDescription.setTextColor(Color.parseColor("#288818"))
-                binding.tvStatus.setPadding(8)
+                binding.tvStatus.setPadding(paddingInPx)
             }
             "C" -> {
                 binding.tvStatus.setTextColor(Color.parseColor("#C6811A"))
@@ -95,7 +100,7 @@ class CompaniesViewHolder(
                     null
                 )
                 binding.tvDescription.setTextColor(Color.parseColor("#C6811A"))
-                binding.tvStatus.setPadding(8)
+                binding.tvStatus.setPadding(paddingInPx)
             }
             "F","D" -> {
                 binding.tvStatus.setTextColor(Color.parseColor("#CF2424"))
@@ -105,7 +110,7 @@ class CompaniesViewHolder(
                     null
                 )
                 binding.tvDescription.setTextColor(Color.parseColor("#CF2424"))
-                binding.tvStatus.setPadding(8)
+                binding.tvStatus.setPadding(paddingInPx)
             }
         }
     }

@@ -14,6 +14,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.databinding.FragmentInfoPagerBinding
+import sarzhane.e.stopfundwar_android.util.setFullScreen
+import sarzhane.e.stopfundwar_android.util.setWidthPercent
 import javax.inject.Inject
 
 
@@ -33,6 +35,7 @@ class InfoDialogFragment : DialogFragment(R.layout.fragment_info_pager) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setFullScreen()
         setInfoItems()
         setupIndicators()
         setCurrentIndicator(0)

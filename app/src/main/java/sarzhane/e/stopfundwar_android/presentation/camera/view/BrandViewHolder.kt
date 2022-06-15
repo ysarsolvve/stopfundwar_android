@@ -8,6 +8,7 @@ import com.squareup.picasso.Picasso
 import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.databinding.ItemRecognitionBinding
 import sarzhane.e.stopfundwar_android.domain.companies.Company
+import sarzhane.e.stopfundwar_android.util.dpToPx
 
 
 class BrandViewHolder(
@@ -36,6 +37,8 @@ class BrandViewHolder(
     }
 
     private fun setStatusColor(brand: String?) {
+        val padding:Number = 8
+        val paddingInPx = padding.dpToPx().toInt()
         when (brand) {
             "A","B" -> {
                 binding.tvStatus.setTextColor(Color.parseColor("#288818"))
@@ -46,7 +49,7 @@ class BrandViewHolder(
                 )
                 binding.cvItem.setCardBackgroundColor(Color.parseColor("#4FB83D"))
                 binding.tvDescription.setTextColor(Color.parseColor("#288818"))
-                binding.tvStatus.setPadding(8)
+                binding.tvStatus.setPadding(paddingInPx)
             }
             "C" -> {
                 binding.tvStatus.setTextColor(Color.parseColor("#C6811A"))
@@ -57,7 +60,7 @@ class BrandViewHolder(
                 )
                 binding.cvItem.setCardBackgroundColor(Color.parseColor("#FFA841"))
                 binding.tvDescription.setTextColor(Color.parseColor("#C6811A"))
-                binding.tvStatus.setPadding(8)
+                binding.tvStatus.setPadding(paddingInPx)
             }
             "F","D" -> {
                 binding.tvStatus.setTextColor(Color.parseColor("#CF2424"))
@@ -68,7 +71,7 @@ class BrandViewHolder(
                 )
                 binding.cvItem.setCardBackgroundColor(Color.parseColor("#E84949"))
                 binding.tvDescription.setTextColor(Color.parseColor("#CF2424"))
-                binding.tvStatus.setPadding(8)
+                binding.tvStatus.setPadding(paddingInPx)
             }
         }
     }

@@ -1,5 +1,6 @@
 package sarzhane.e.stopfundwar_android.presentation.companies.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
@@ -20,6 +21,7 @@ class CompaniesViewModel @Inject constructor(
 
     fun getListOfCompanies() {
         viewModelScope.launch {
+            Log.d("List","Run")
             getData()
         }
     }

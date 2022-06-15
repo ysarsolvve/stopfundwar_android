@@ -122,7 +122,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         when (state) {
             is CompaniesResult.SuccessResult -> {
                 binding.rvRecognitions.toVisible()
-                brandAdapter.submitList(state.result)
+                brandAdapter.submitList(listOf(state.result.first()))
             }
             is CompaniesResult.ErrorResult -> {
             }
@@ -350,6 +350,10 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     private fun setupCameraFlash() {
         binding.ivFlash.setOnClickListener {
             flashFlag = !flashFlag
+            when(flashFlag){
+                true -> binding.ivFlash.setImageResource(R.drawable.ic_flashlight_disable)
+                false -> binding.ivFlash.setImageResource(R.drawable.ic_flashlight_able)
+            }
             cameraControl.enableTorch(flashFlag)
         }
     }

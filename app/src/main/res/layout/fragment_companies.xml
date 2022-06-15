@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/space_normal"
+    android:layout_margin="@dimen/space_medium"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -11,6 +11,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:textSize="36sp"
+        android:layout_margin="@dimen/space_medium"
         android:fontFamily="@font/raleway900"
         android:text="@string/list_of_companies"
         android:textColor="@color/black"
@@ -21,8 +22,7 @@
         android:id="@+id/scrollView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_normal"
-        android:layout_marginBottom="@dimen/space_normal"
+        android:layout_margin="@dimen/space_medium"
         app:layout_constraintBottom_toTopOf="@+id/searchInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -113,8 +113,7 @@
         android:paddingStart="12dp"
         android:layout_width="0dp"
         android:layout_height="36dp"
-        android:layout_marginTop="@dimen/space_normal"
-        android:layout_marginBottom="@dimen/space_normal"
+        android:layout_margin="@dimen/space_medium"
         android:importantForAutofill="no"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -127,10 +126,33 @@
         android:layout_height="0dp"
         android:clipToPadding="false"
         android:orientation="vertical"
+        android:layout_marginStart="@dimen/space_medium"
+        android:layout_marginTop="@dimen/space_medium"
+        android:layout_marginBottom="@dimen/space_medium"
+        android:layout_marginEnd="@dimen/space_medium"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchInput" />
+
+    <sarzhane.e.stopfundwar_android.util.fastsroll.FastScrollerView
+        android:id="@+id/sample_basic_fastscroller"
+        android:layout_width="12dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchInput"
+        />
+
+    <sarzhane.e.stopfundwar_android.util.fastsroll.FastScrollerThumbView
+        android:id="@+id/sample_basic_fastscroller_thumb"
+        android:layout_width="40dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintBottom_toBottomOf="@+id/sample_basic_fastscroller"
+        app:layout_constraintEnd_toStartOf="@+id/sample_basic_fastscroller"
+        app:layout_constraintTop_toTopOf="@+id/sample_basic_fastscroller"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

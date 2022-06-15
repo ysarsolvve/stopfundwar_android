@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
-        android:padding="@dimen/space_medium"
+        tools:padding="@dimen/space_medium"
         android:textSize="14sp"
         android:fontFamily="@font/roboto500"
         app:layout_constraintEnd_toEndOf="parent"

@@ -3,10 +3,14 @@
     <dimen name="space_small">4dp</dimen>
     <dimen name="space_medium">8dp</dimen>
     <dimen name="space_normal">16dp</dimen>
+    <dimen name="space_24dp">24dp</dimen>
     <dimen name="space_big">32dp</dimen>
     <dimen name="space_huge">48dp</dimen>
     <dimen name="cornerRad">6dp</dimen>
     <dimen name="itemsDist">19dp</dimen>
     <dimen name="posterHeight">150dp</dimen>
     <dimen name="reviewElevation">4dp</dimen>
+    <dimen name="fast_scroller_thumb_elevation">2dp</dimen>
+    <dimen name="fast_scroller_thumb_size">32dp</dimen>
+    <dimen name="fast_scroller_default_text_padding">4dp</dimen>
 </resources>
