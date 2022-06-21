@@ -30,4 +30,10 @@
     <string name="serhiy_prytula_description">Serhiy Prytula has been helping the Ukrainian Army as a private volunteer since Russia occupied Crimea and Donbas in 2014.</string>
     <string name="volunteer_group_description">Volunteer group that helps the military with equipment</string>
     <string name="list_of_companies">List of companies</string>
+    <string name="camera_permission_granted">Camera permission has been granted</string>
+    <string name="permissions_denied_forever">Permissions are denied forever</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="open">Open</string>
+    <string name="permission_denied_forever_message">"You have denied permissions forever. You can change your decision in the app settings.\n\nWould you like to open app settings?"</string>
+    <string name="skeleton_brand_name">Looking for brand logo...</string>
 </resources>

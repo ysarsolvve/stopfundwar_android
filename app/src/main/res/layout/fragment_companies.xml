@@ -140,10 +140,8 @@
         android:id="@+id/sample_basic_fastscroller"
         android:layout_width="12dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchInput"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/searchInput" />
 
     <sarzhane.e.stopfundwar_android.util.fastsroll.FastScrollerThumbView
         android:id="@+id/sample_basic_fastscroller_thumb"

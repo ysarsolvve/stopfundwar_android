@@ -1,10 +1,10 @@
 package sarzhane.e.stopfundwar_android.presentation.splash.viewmodel
 
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 
 import kotlinx.coroutines.launch
 import sarzhane.e.stopfundwar_android.data.companies.CompaniesRepository
@@ -16,11 +16,17 @@ class SplashViewModel @Inject constructor(
     private val companiesRepository: CompaniesRepository
 ) : ViewModel() {
 
+    val errorsStream = SingleLiveEvent<Throwable>()
+    val doneCommand = SingleLiveEvent<Unit>()
+    private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+        errorsStream.postValue(throwable)
+    }
 
-    fun getCompanies(){
-        viewModelScope.launch {
+    fun load(shouldPreload: Boolean) {
+        if (shouldPreload.not()) doneCommand.postValue(Unit).also { return }
+        viewModelScope.launch(exceptionHandler) {
             companiesRepository.getAllCompanies()
-        }
+        }.invokeOnCompletion { if (it == null) doneCommand.postValue(Unit) }
     }
 
 }

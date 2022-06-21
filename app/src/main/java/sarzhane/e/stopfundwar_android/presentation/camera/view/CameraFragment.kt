@@ -29,6 +29,7 @@ import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
 import sarzhane.e.stopfundwar_android.databinding.FragmentCameraBinding
+import sarzhane.e.stopfundwar_android.domain.companies.Company
 import sarzhane.e.stopfundwar_android.presentation.PermissionsFragment
 import sarzhane.e.stopfundwar_android.presentation.camera.info.InfoDialogFragment
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CameraViewModel
@@ -131,6 +132,8 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
             }
             is CompaniesResult.EmptyResult -> {
                 binding.rvRecognitions.toVisible()
+                brandAdapter.submitList(listOf(Company(brandName = "Looking for brand logo...")))
+
             }
             CompaniesResult.Loading -> TODO()
         }.exhaustive

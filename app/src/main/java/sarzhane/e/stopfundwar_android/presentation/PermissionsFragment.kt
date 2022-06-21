@@ -1,71 +1,70 @@
-/*
- * Copyright 2020 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package sarzhane.e.stopfundwar_android.presentation
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.core.navigation.HomeScreen
 import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import javax.inject.Inject
 
-
-private const val PERMISSIONS_REQUEST_CODE = 10
 private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
 
-/**
- * The sole purpose of this fragment is to request permissions and, once granted, display the
- * camera fragment to the user.
- */
 @AndroidEntryPoint
 class PermissionsFragment : Fragment() {
 
     @Inject
     lateinit var navigator: Navigator
+    private val requestCameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),    // contract for requesting 1 permission
+        ::onGotCameraPermissionResult
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
 
-        if (!hasPermissions(requireContext())) {
-            // Request camera-related permissions
-            requestPermissions(PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE)
+    }
+
+    private fun onGotCameraPermissionResult(granted: Boolean) {
+        if (granted) {
+            onCameraPermissionGranted()
         } else {
-            // If permissions have already been granted, proceed
-            navigateToCamera()
+            if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                askUserForOpeningAppSettings()
+            } else {
+                Toast.makeText(context, R.string.permission_denied, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
-    override fun onRequestPermissionsResult(
-            requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSIONS_REQUEST_CODE) {
-            if (PackageManager.PERMISSION_GRANTED == grantResults.firstOrNull()) {
-                // Take the user to the success fragment when permission is granted
-                Toast.makeText(context, "Permission request granted", Toast.LENGTH_LONG).show()
-                navigateToCamera()
-            } else {
-                Toast.makeText(context, "Permission request denied", Toast.LENGTH_LONG).show()
-            }
+    private fun askUserForOpeningAppSettings() {
+        val appSettingsIntent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", context?.packageName, null)
+        )
+        if (context?.packageManager?.resolveActivity(appSettingsIntent, PackageManager.MATCH_DEFAULT_ONLY) == null) {
+            Toast.makeText(context, R.string.permissions_denied_forever, Toast.LENGTH_SHORT).show()
+        } else {
+            AlertDialog.Builder(context!!)
+                .setTitle(R.string.permission_denied)
+                .setMessage(R.string.permission_denied_forever_message)
+                .setPositiveButton(R.string.open) { _, _ ->
+                    startActivity(appSettingsIntent)
+                }
+                .create()
+                .show()
         }
     }
 
@@ -73,6 +72,11 @@ class PermissionsFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             navigator.navigateTo(screen = HomeScreen(),addToBackStack = false)
         }
+    }
+
+    private fun onCameraPermissionGranted() {
+        navigateToCamera()
+        Toast.makeText(context, R.string.camera_permission_granted, Toast.LENGTH_SHORT).show()
     }
 
     companion object {

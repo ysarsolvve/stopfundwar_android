@@ -25,7 +25,7 @@ class BrandViewHolder(
     }
 
     private fun setBrand(brand: String?) {
-        binding.tvBrandName.text = brand
+      binding.tvBrandName.text = brand
     }
 
     private fun setDescription(brand: String?) {
@@ -83,4 +83,5 @@ class BrandViewHolder(
             .centerInside()
             .into(binding.ivBrand)
     }
+
 }

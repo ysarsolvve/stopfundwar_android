@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import sarzhane.e.stopfundwar_android.R
@@ -26,20 +27,20 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getCompanies()
-
-        Handler().postDelayed({
-            if (onBoardingFinished()) {
-                navigator.navigateTo(
-                    screen = PermissionsScreen(),
-                    addToBackStack = false,)
-            } else {
-                navigator.navigateTo(
-                    screen = ViewPagerScreen(),
-                    addToBackStack = false,)
+        viewModel.load(activity?.intent?.data == null)
+        observe(viewModel.doneCommand) {
+            when (onBoardingFinished()) {
+                true -> navigator.navigateTo(screen = PermissionsScreen(), addToBackStack = false)
+                false -> navigator.navigateTo(screen = ViewPagerScreen(), addToBackStack = false)
             }
-        }, 2000)
-
+        }
+        observe(viewModel.errorsStream) {
+            Toast.makeText(
+                requireContext(),
+                it.toString(),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     private fun onBoardingFinished(): Boolean {
