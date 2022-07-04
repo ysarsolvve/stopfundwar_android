@@ -371,7 +371,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
     companion object {
 
-        private const val ACCURACY_THRESHOLD = 0.75f
+        private const val ACCURACY_THRESHOLD = 0.70f
         private const val MODEL_PATH = "model.tflite"
         private const val LABELS_PATH = "coco_label.txt"
     }
