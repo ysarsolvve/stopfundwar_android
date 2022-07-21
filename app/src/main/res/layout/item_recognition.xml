@@ -1,73 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <androidx.cardview.widget.CardView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cvItem"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/space_normal"
-    android:elevation="@dimen/space_normal"
-    app:cardCornerRadius="@dimen/space_medium">
+    android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/space_normal"
-            android:layout_margin="4dp"
-            android:background="@drawable/rounded_corner_white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cvItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_normal"
+        android:background="@drawable/rounded_corner_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/ivBrand"
-            android:layout_width="102dp"
-            android:layout_height="36dp"
-            android:scaleType="fitCenter"
-            tools:src="@drawable/splash_logo_vector"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corner_white"
+        android:padding="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tvBrandName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            tools:text="Nestle"
-            android:textSize="18sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/roboto500"
-            android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/tvDescription"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivBrand"/>
+            <ImageView
+                android:id="@+id/ivBrand"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:scaleType="fitCenter"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription"
+                tools:src="@drawable/splash_logo_vector" />
 
-        <TextView
-            android:id="@+id/tvDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Holding Off New Investments/Development"
-            android:layout_marginTop="16dp"
-            android:textSize="14sp"
-            tools:textColor="@color/orange"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvBrandName"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            <TextView
+                android:id="@+id/tvBrandName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_normal"
+                android:fontFamily="@font/roboto700"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ivBrand"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Nestle" />
 
-        <TextView
-            android:id="@+id/tvStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:padding="@dimen/space_medium"
-            tools:text="Digging In"
-            tools:background="@drawable/rounded_corner_orange"
-            android:textSize="14sp"
-            tools:textColor="@color/orange"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            <TextView
+                android:id="@+id/tvDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginTop="@dimen/space_normal"
+                android:fontFamily="@font/raleway700"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ivBrand"
+                app:layout_constraintTop_toBottomOf="@+id/tvBrandName"
+                tools:text="Halted non-essential imports/exports to Russia, stopped all advertising, and suspended all capital investment"
+                tools:textColor="@color/orange" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        tools:background="@drawable/rounded_corner_orange"
+        tools:padding="@dimen/space_medium"
+        tools:text="Digging In"
+        tools:textColor="@color/white" />
+</FrameLayout>

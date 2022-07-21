@@ -19,7 +19,7 @@ class CharityFragment : Fragment(R.layout.fragment_charity) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.translate.setOnClickListener { showInfoDialogFragment() }
         setupListeners()
     }
 
@@ -51,6 +51,11 @@ class CharityFragment : Fragment(R.layout.fragment_charity) {
         binding.nineCharity.setOnClickListener {
             webNavigator.navigateTo(NINE_CHARITY)
         }
+    }
+
+    private fun showInfoDialogFragment() {
+        val dialogFragment =SelectLanguageFragment.newInstance()
+        dialogFragment.show(childFragmentManager, SelectLanguageFragment.TAG)
     }
 
     companion object {

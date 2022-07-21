@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -19,7 +20,10 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.*
 
 val Int.toDp: Int
     get() = (this / Resources.getSystem().displayMetrics.density).toInt()
@@ -66,6 +70,8 @@ fun Fragment.showSystemMessage(text: String, longDuration: Boolean = false) {
 fun View.toGone() {
     visibility = View.GONE
 }
+internal fun Int.toDp(context : Context) =
+    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), context.resources.displayMetrics)
 
 fun View.toVisible() {
     visibility = View.VISIBLE
@@ -92,6 +98,17 @@ fun DialogFragment.setWidthPercent(percentage: Int) {
     val rect = dm.run { Rect(0, 0, widthPixels, heightPixels) }
     val percentWidth = rect.width() * percent
     dialog?.window?.setLayout(percentWidth.toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+}
+
+fun View.delayOnLifecycle(
+    durationInMillis: Long,
+    dispatcher: CoroutineDispatcher = Dispatchers.Main,
+    block: () -> Unit
+): Job? = findViewTreeLifecycleOwner()?.let { lifecycleOwner ->
+    lifecycleOwner.lifecycle.coroutineScope.launch(dispatcher) {
+        delay(durationInMillis)
+        block
+    }
 }
 
 /**

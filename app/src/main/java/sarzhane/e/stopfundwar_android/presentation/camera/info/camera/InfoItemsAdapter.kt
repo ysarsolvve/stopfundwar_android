@@ -1,4 +1,4 @@
-package sarzhane.e.stopfundwar_android.presentation.camera.info
+package sarzhane.e.stopfundwar_android.presentation.camera.info.camera
 
 import android.view.LayoutInflater
 import android.view.View

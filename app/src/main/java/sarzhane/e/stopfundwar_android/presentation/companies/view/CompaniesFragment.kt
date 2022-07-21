@@ -12,6 +12,8 @@ import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.databinding.FragmentCompaniesBinding
 import sarzhane.e.stopfundwar_android.domain.companies.Company
 import sarzhane.e.stopfundwar_android.domain.companies.DataModel
+import sarzhane.e.stopfundwar_android.presentation.camera.info.camera.InfoDialogFragment
+import sarzhane.e.stopfundwar_android.presentation.camera.info.companies.InfoCompaniesFragment
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult
 import sarzhane.e.stopfundwar_android.presentation.companies.viewmodel.CompaniesViewModel
 import sarzhane.e.stopfundwar_android.util.afterTextChanged
@@ -34,6 +36,7 @@ class CompaniesFragment : Fragment(R.layout.fragment_companies) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.info.setOnClickListener { showInfoDialogFragment() }
         setupCompaniesList()
         viewModel.getListOfCompanies()
         binding.searchInput.afterTextChanged { viewModel.onNewQuery(it, filter) }
@@ -139,6 +142,11 @@ class CompaniesFragment : Fragment(R.layout.fragment_companies) {
             }
         }
         return localList
+    }
+
+    private fun showInfoDialogFragment() {
+        val dialogFragment = InfoCompaniesFragment.newInstance()
+        dialogFragment.show(childFragmentManager, InfoCompaniesFragment.TAG)
     }
 
     private fun setupCompaniesList() {

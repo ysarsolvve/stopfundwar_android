@@ -1,4 +1,4 @@
-package sarzhane.e.stopfundwar_android.presentation.camera.info
+package sarzhane.e.stopfundwar_android.presentation.camera.info.camera
 
 import android.os.Bundle
 import android.view.View
@@ -15,13 +15,8 @@ import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.databinding.FragmentInfoPagerBinding
 import sarzhane.e.stopfundwar_android.util.setFullScreen
-import sarzhane.e.stopfundwar_android.util.setWidthPercent
 import javax.inject.Inject
 
-
-/**
- * Contains the data that you want to display
- */
 @AndroidEntryPoint
 class InfoDialogFragment : DialogFragment(R.layout.fragment_info_pager) {
     private lateinit var infoItemsAdapter: InfoItemsAdapter

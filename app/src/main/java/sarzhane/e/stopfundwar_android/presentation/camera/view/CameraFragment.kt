@@ -23,19 +23,18 @@ import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
-import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp
 import org.tensorflow.lite.support.image.ops.Rot90Op
 import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
 import sarzhane.e.stopfundwar_android.databinding.FragmentCameraBinding
-import sarzhane.e.stopfundwar_android.domain.companies.Company
 import sarzhane.e.stopfundwar_android.presentation.PermissionsFragment
-import sarzhane.e.stopfundwar_android.presentation.camera.info.InfoDialogFragment
+import sarzhane.e.stopfundwar_android.presentation.camera.info.camera.InfoDialogFragment
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CameraViewModel
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult
 import sarzhane.e.stopfundwar_android.tflite.ObjectDetectionHelper
 import sarzhane.e.stopfundwar_android.util.exhaustive
+import sarzhane.e.stopfundwar_android.util.toGone
 import sarzhane.e.stopfundwar_android.util.toVisible
 import timber.log.Timber
 import java.util.concurrent.Executors
@@ -55,6 +54,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     private lateinit var cameraControl: CameraControl
     private var flashFlag: Boolean = false
     private var pauseAnalysis = false
+    var counter = 0
 
     private lateinit var bitmapBuffer: Bitmap
 
@@ -66,7 +66,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
     private val tfImageProcessor by lazy {
         val cropSize = minOf(bitmapBuffer.width, bitmapBuffer.height)
-        Log.d("tfImageProcessor", "cropSize $cropSize")
         ImageProcessor.Builder()
             .add(
                 ResizeOp(
@@ -106,14 +105,11 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.i("onCreate()" )
         colors = viewModel.getColors()
-        Log.d("Response", "mapColors in CameraFragment${colors}")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Timber.i("onViewCreated()")
         binding.ivInfo.setOnClickListener { showInfoDialogFragment() }
         viewModel.searchResult.observe(viewLifecycleOwner, ::handleCompanies)
         setupReviewsList()
@@ -123,16 +119,33 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
 
     private fun handleCompanies(state: CompaniesResult) {
+
         when (state) {
             is CompaniesResult.SuccessResult -> {
+                counter = 0
+                Log.d("EmptyResult", "SuccessResult ")
+                if (state.result.first().statusRate == "F"||state.result.first().statusRate == "D") binding.alert.itemAlert.toVisible()
+                else binding.alert.itemAlert.toGone()
+                binding.skeleton.skeletonLooking.toGone()
                 binding.rvRecognitions.toVisible()
                 brandAdapter.submitList(listOf(state.result.first()))
             }
             is CompaniesResult.ErrorResult -> {
             }
             is CompaniesResult.EmptyResult -> {
-                binding.rvRecognitions.toVisible()
-                brandAdapter.submitList(listOf(Company(brandName = "Looking for brand logo...")))
+                counter++
+                Log.d("EmptyResult", "EmptyResult ")
+                if (counter in 21..99){
+                    Log.d("EmptyResult", "EmptyResult counter>20 $counter")
+                    binding.alert.itemAlert.toGone()
+                    binding.rvRecognitions.toGone()
+                    binding.skeleton.skeletonLooking.toVisible()
+                    binding.skeleton.tvStatus.text = "Looking for brand logo..."
+                }
+                else if (counter > 100){
+                    Log.d("EmptyResult", "EmptyResult counter>100 $counter")
+                    binding.skeleton.tvStatus.text = "Try to detect logo on other product..."}
+                else return
 
             }
             CompaniesResult.Loading -> TODO()
@@ -269,7 +282,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         val labelIds = mutableSetOf<Int>()
 
         for (prediction in predictions) {
-            // Location has to be mapped to our local coordinates
             val location = mapOutputCoordinates(prediction.location)
             labelIds.add(prediction.labelId)
             val label: String = prediction.label
@@ -292,13 +304,8 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         })
     }
 
-    /**
-     * Helper function used to map the coordinates for objects coming out of
-     * the model into the coordinates that the user sees on the screen.
-     */
     private fun mapOutputCoordinates(location: RectF): RectF {
 
-        // Step 1: map location to the preview coordinates
         val previewLocation = RectF(
             location.left * binding.viewFinder.width,
             location.top * binding.viewFinder.height,
@@ -306,9 +313,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
             location.bottom * binding.viewFinder.height
         )
 
-        // Step 2: compensate for camera sensor orientation and mirroring
-
-        // Step 3: compensate for 1:1 to 4:3 aspect ratio conversion + small margin
         val margin = 0.1f
         val requestedRatio = 4f / 3f
         val midX = (previewLocation.left + previewLocation.right) / 2f
@@ -337,12 +341,10 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     }
 
     override fun onDestroy() {
-        // Terminate all outstanding analyzing jobs (if there is any).
         executor.apply {
             shutdown()
             awaitTermination(1000, TimeUnit.MILLISECONDS)
         }
-        // Release TFLite resources.
         tflite.close()
         nnApiDelegate.close()
         super.onDestroy()

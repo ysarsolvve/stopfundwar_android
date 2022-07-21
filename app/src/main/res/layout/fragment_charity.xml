@@ -25,6 +25,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/translate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/translate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/title"
+            app:layout_constraintStart_toEndOf="@+id/title"
+            app:layout_constraintBottom_toBottomOf="@+id/title"/>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/firstCharity"
             android:layout_width="0dp"
@@ -66,10 +76,25 @@
                 android:layout_marginTop="@dimen/space_normal"
                 android:text="@string/the_national_bank_description"
                 style="@style/charity_description"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="tvOpenLinkCharity"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivFirstCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleFirstCharity" />
+
+            <TextView
+                android:id="@+id/tvOpenLinkCharity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginTop="@dimen/space_normal"
+                android:textColor="#2F80ED"
+                android:drawablePadding="8dp"
+                android:text="@string/open_link"
+                style="@style/charity_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivFirstCharity"
+                app:layout_constraintTop_toBottomOf="@+id/tvDescFirstCharity"
+                app:drawableEndCompat="@drawable/row_blue" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

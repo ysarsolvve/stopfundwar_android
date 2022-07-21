@@ -34,6 +34,8 @@
     <string name="permissions_denied_forever">Permissions are denied forever</string>
     <string name="permission_denied">Permission denied</string>
     <string name="open">Open</string>
+    <string name="open_link">Open link</string>
     <string name="permission_denied_forever_message">"You have denied permissions forever. You can change your decision in the app settings.\n\nWould you like to open app settings?"</string>
     <string name="skeleton_brand_name">Looking for brand logo...</string>
+    <string name="alert_text">By paying for this product you sponsor the russian army!</string>
 </resources>

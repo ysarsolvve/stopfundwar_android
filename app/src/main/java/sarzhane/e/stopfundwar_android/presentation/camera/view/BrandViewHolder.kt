@@ -41,35 +41,45 @@ class BrandViewHolder(
         val paddingInPx = padding.dpToPx().toInt()
         when (brand) {
             "A","B" -> {
-                binding.tvStatus.setTextColor(Color.parseColor("#288818"))
                 binding.tvStatus.background = ResourcesCompat.getDrawable(
                     binding.root.resources,
                     R.drawable.rounded_corner_green,
                     null
                 )
-                binding.cvItem.setCardBackgroundColor(Color.parseColor("#4FB83D"))
+                binding.cvItem.background = ResourcesCompat.getDrawable(
+                    binding.root.resources,
+                    R.drawable.rounded_corner_green,
+                    null
+                )
                 binding.tvDescription.setTextColor(Color.parseColor("#288818"))
                 binding.tvStatus.setPadding(paddingInPx)
             }
             "C" -> {
-                binding.tvStatus.setTextColor(Color.parseColor("#C6811A"))
                 binding.tvStatus.background = ResourcesCompat.getDrawable(
                     binding.root.resources,
                     R.drawable.rounded_corner_orange,
                     null
                 )
-                binding.cvItem.setCardBackgroundColor(Color.parseColor("#FFA841"))
+                binding.cvItem.background = ResourcesCompat.getDrawable(
+                    binding.root.resources,
+                    R.drawable.rounded_corner_orange,
+                    null
+                )
                 binding.tvDescription.setTextColor(Color.parseColor("#C6811A"))
                 binding.tvStatus.setPadding(paddingInPx)
             }
             "F","D" -> {
-                binding.tvStatus.setTextColor(Color.parseColor("#CF2424"))
                 binding.tvStatus.background = ResourcesCompat.getDrawable(
                     binding.root.resources,
                     R.drawable.rounded_corner_red,
                     null
                 )
-                binding.cvItem.setCardBackgroundColor(Color.parseColor("#E84949"))
+
+                binding.cvItem.background = ResourcesCompat.getDrawable(
+                    binding.root.resources,
+                    R.drawable.rounded_corner_red,
+                    null
+                )
                 binding.tvDescription.setTextColor(Color.parseColor("#CF2424"))
                 binding.tvStatus.setPadding(paddingInPx)
             }
@@ -77,6 +87,7 @@ class BrandViewHolder(
     }
 
     private fun setThumbnail(brand: String?) {
+        if (brand!!.isEmpty()) return
         Picasso.get()
             .load(brand)
             .fit()

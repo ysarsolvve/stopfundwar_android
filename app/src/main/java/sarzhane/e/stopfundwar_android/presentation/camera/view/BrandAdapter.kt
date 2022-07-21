@@ -9,9 +9,7 @@ import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.databinding.ItemRecognitionBinding
 import sarzhane.e.stopfundwar_android.databinding.ItemRecognitionSkeletonBinding
 import sarzhane.e.stopfundwar_android.domain.companies.Company
-import sarzhane.e.stopfundwar_android.domain.companies.DataModel
-import sarzhane.e.stopfundwar_android.presentation.companies.view.CompaniesViewHolder
-import sarzhane.e.stopfundwar_android.presentation.companies.view.HeaderViewHolder
+
 
 
 class BrandAdapter() : ListAdapter<Company, RecyclerView.ViewHolder>(BrandDiffCallback()) {
@@ -35,7 +33,7 @@ class BrandAdapter() : ListAdapter<Company, RecyclerView.ViewHolder>(BrandDiffCa
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (currentList[position].id.isNullOrEmpty()) {
+        return when (currentList[position].brandName.isNullOrEmpty()) {
             true -> R.layout.item_recognition_skeleton
             false -> R.layout.item_recognition
         }

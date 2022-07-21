@@ -1,6 +1,5 @@
 package sarzhane.e.stopfundwar_android.presentation.companies.view
 
-import android.content.Context
 import android.graphics.Color
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -11,8 +10,11 @@ import androidx.transition.TransitionManager
 import com.squareup.picasso.Picasso
 import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.databinding.ItemCompanyBinding
+import sarzhane.e.stopfundwar_android.databinding.ItemCompanyCollapseBinding
 import sarzhane.e.stopfundwar_android.domain.companies.DataModel
 import sarzhane.e.stopfundwar_android.util.dpToPx
+import sarzhane.e.stopfundwar_android.util.toGone
+import sarzhane.e.stopfundwar_android.util.toVisible
 
 
 class CompaniesViewHolder(
@@ -27,17 +29,25 @@ class CompaniesViewHolder(
             smallItemConstraint.clone(itemView.context, R.layout.item_company)
             val largeItemConstraint = ConstraintSet()
             largeItemConstraint.clone(itemView.context, R.layout.item_company_collapse)
+            val largeItemWithAlertConstraint = ConstraintSet()
+            largeItemWithAlertConstraint.clone(itemView.context, R.layout.item_company_collapse_alert)
 
             if (!isViewExpanded) {
                 val typeface = ResourcesCompat.getFont(itemView.context,R.font.raleway400)
                 binding.tvBrandName.typeface = typeface
+                binding.ivChevron.setImageResource(R.drawable.chevron_down)
             } else {
                 val typeface = ResourcesCompat.getFont(itemView.context,R.font.raleway700)
                 binding.tvBrandName.typeface = typeface
+                binding.ivChevron.setImageResource(R.drawable.chevron_up)
         }
 
-            val constraintToApply = if (isViewExpanded) largeItemConstraint else
-                smallItemConstraint
+            val constraintToApply =
+                if (isViewExpanded) {
+                    if (brand.statusRate == "F" || brand.statusRate == "D") {
+                        largeItemWithAlertConstraint
+                    } else largeItemConstraint
+                } else smallItemConstraint
 
             animateItemView(constraintToApply, binding.brandConstrainLayout)
 
@@ -73,6 +83,7 @@ class CompaniesViewHolder(
     private fun setThumbnail(brand: String?) {
         Picasso.get()
             .load(brand)
+            .placeholder( R.drawable.progress_animation )
             .fit()
             .centerInside()
             .into(binding.ivBrand)
@@ -83,7 +94,7 @@ class CompaniesViewHolder(
         val paddingInPx = padding.dpToPx().toInt()
         when (brand) {
             "A","B" -> {
-                binding.tvStatus.setTextColor(Color.parseColor("#288818"))
+                binding.tvStatus.setTextColor(Color.WHITE)
                 binding.tvStatus.background = ResourcesCompat.getDrawable(
                     binding.root.resources,
                     R.drawable.rounded_corner_green,
@@ -93,7 +104,7 @@ class CompaniesViewHolder(
                 binding.tvStatus.setPadding(paddingInPx)
             }
             "C" -> {
-                binding.tvStatus.setTextColor(Color.parseColor("#C6811A"))
+                binding.tvStatus.setTextColor(Color.WHITE)
                 binding.tvStatus.background = ResourcesCompat.getDrawable(
                     binding.root.resources,
                     R.drawable.rounded_corner_orange,
@@ -103,7 +114,7 @@ class CompaniesViewHolder(
                 binding.tvStatus.setPadding(paddingInPx)
             }
             "F","D" -> {
-                binding.tvStatus.setTextColor(Color.parseColor("#CF2424"))
+                binding.tvStatus.setTextColor(Color.WHITE)
                 binding.tvStatus.background = ResourcesCompat.getDrawable(
                     binding.root.resources,
                     R.drawable.rounded_corner_red,

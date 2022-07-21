@@ -3,61 +3,49 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/skeletonLooking"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp"
+    android:visibility="gone"
     android:background="@drawable/rounded_corner_white"
-    android:padding="@dimen/space_normal"
+    android:padding="20dp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
+    <sarzhane.e.stopfundwar_android.util.SkeletonLoadingView
         android:id="@+id/ivBrand"
-        android:layout_width="102dp"
-        android:layout_height="36dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:background="@drawable/rounded_corner_grey"
-        android:scaleType="fitCenter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <sarzhane.e.stopfundwar_android.util.SkeletonLoadingView
         android:id="@+id/tvBrandName"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/roboto500"
-        android:text="@string/skeleton_brand_name"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvDescription"
+        android:layout_height="32dp"
+        android:layout_marginStart="@dimen/space_normal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivBrand" />
-
-    <TextView
-        android:id="@+id/tvDescription"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_corner_grey"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvBrandName"
-        tools:textColor="@color/orange" />
-
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="102dp"
-        android:layout_height="36dp"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ivBrand"
+        app:layout_constraintTop_toTopOf="@+id/ivBrand"
         tools:background="@drawable/rounded_corner_grey"
         tools:textColor="@color/orange" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvStatus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_normal"
+        android:layout_marginStart="@dimen/space_normal"
+        android:fontFamily="@font/roboto500"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvBrandName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ivBrand"
+        app:layout_constraintTop_toBottomOf="@+id/ivBrand" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 
