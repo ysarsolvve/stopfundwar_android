@@ -7,6 +7,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.databinding.FragmentSelectLanguageBinding
+import sarzhane.e.stopfundwar_android.util.setFullScreen
 
 @AndroidEntryPoint
 class SelectLanguageFragment : DialogFragment(R.layout.fragment_select_language) {
@@ -17,7 +18,7 @@ class SelectLanguageFragment : DialogFragment(R.layout.fragment_select_language)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setFullScreen()
     }
 
 

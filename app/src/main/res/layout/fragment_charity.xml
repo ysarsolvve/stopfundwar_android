@@ -76,7 +76,7 @@
                 android:layout_marginTop="@dimen/space_normal"
                 android:text="@string/the_national_bank_description"
                 style="@style/charity_description"
-                app:layout_constraintBottom_toTopOf="tvOpenLinkCharity"
+                app:layout_constraintBottom_toTopOf="@+id/tvOpenLinkCharity"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivFirstCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleFirstCharity" />
@@ -136,10 +136,25 @@
                 android:layout_marginTop="@dimen/space_normal"
                 android:text="@string/support_ukrainian_army_description"
                 style="@style/charity_description"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tvOpenLinkSecondCharity"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivSecondCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleSecondCharity" />
+
+            <TextView
+                android:id="@+id/tvOpenLinkSecondCharity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginTop="@dimen/space_normal"
+                android:textColor="#2F80ED"
+                android:drawablePadding="8dp"
+                android:text="@string/open_link"
+                style="@style/charity_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivSecondCharity"
+                app:layout_constraintTop_toBottomOf="@+id/tvDescSecondCharity"
+                app:drawableEndCompat="@drawable/row_blue" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -183,10 +198,25 @@
                 android:layout_marginTop="@dimen/space_normal"
                 android:text="@string/support_ukrainian_defenders_description"
                 style="@style/charity_description"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tvOpenLinkThirdCharity"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivThirdCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleThirdCharity" />
+
+            <TextView
+                android:id="@+id/tvOpenLinkThirdCharity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginTop="@dimen/space_normal"
+                android:textColor="#2F80ED"
+                android:drawablePadding="8dp"
+                android:text="@string/open_link"
+                style="@style/charity_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivThirdCharity"
+                app:layout_constraintTop_toBottomOf="@+id/tvDescThirdCharity"
+                app:drawableEndCompat="@drawable/row_blue" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -228,10 +258,25 @@
                 android:layout_marginTop="@dimen/space_normal"
                 android:text="@string/help_ukraine_in_the_war_description"
                 style="@style/charity_description"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tvOpenLinkFourthCharity"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivFourthCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleFourthCharity" />
+
+            <TextView
+                android:id="@+id/tvOpenLinkFourthCharity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginTop="@dimen/space_normal"
+                android:textColor="#2F80ED"
+                android:drawablePadding="8dp"
+                android:text="@string/open_link"
+                style="@style/charity_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivFourthCharity"
+                app:layout_constraintTop_toBottomOf="@+id/tvDescFourthCharity"
+                app:drawableEndCompat="@drawable/row_blue" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -273,10 +318,25 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/nova_poshta_description"
                 style="@style/charity_description"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tvOpenLinkFifthCharity"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivFifthCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleFifthCharity" />
+
+            <TextView
+                android:id="@+id/tvOpenLinkFifthCharity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginTop="@dimen/space_normal"
+                android:textColor="#2F80ED"
+                android:drawablePadding="8dp"
+                android:text="@string/open_link"
+                style="@style/charity_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivFifthCharity"
+                app:layout_constraintTop_toBottomOf="@+id/tvDescFifthCharity"
+                app:drawableEndCompat="@drawable/row_blue" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -318,10 +378,25 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/donate_to_protect_children_in_ukraine"
                 style="@style/charity_description"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tvOpenLinkSixCharity"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivSixCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleSixCharity" />
+
+            <TextView
+                android:id="@+id/tvOpenLinkSixCharity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginTop="@dimen/space_normal"
+                android:textColor="#2F80ED"
+                android:drawablePadding="8dp"
+                android:text="@string/open_link"
+                style="@style/charity_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivSixCharity"
+                app:layout_constraintTop_toBottomOf="@+id/tvDescSixCharity"
+                app:drawableEndCompat="@drawable/row_blue" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -363,9 +438,24 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/help_the_children"
                 style="@style/charity_description"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/tvOpenLinkSevenCharity"
                 app:layout_constraintStart_toEndOf="@id/ivSevenCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleSevenCharity" />
+
+            <TextView
+                android:id="@+id/tvOpenLinkSevenCharity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginTop="@dimen/space_normal"
+                android:textColor="#2F80ED"
+                android:drawablePadding="8dp"
+                android:text="@string/open_link"
+                style="@style/charity_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivSevenCharity"
+                app:layout_constraintTop_toBottomOf="@+id/tvDescSevenCharity"
+                app:drawableEndCompat="@drawable/row_blue" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -408,10 +498,25 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/serhiy_prytula_description"
                 style="@style/charity_description"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tvOpenLinkEightCharity"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivEightCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleEightCharity" />
+
+            <TextView
+                android:id="@+id/tvOpenLinkEightCharity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginTop="@dimen/space_normal"
+                android:textColor="#2F80ED"
+                android:drawablePadding="8dp"
+                android:text="@string/open_link"
+                style="@style/charity_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivEightCharity"
+                app:layout_constraintTop_toBottomOf="@+id/tvDescEightCharity"
+                app:drawableEndCompat="@drawable/row_blue" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -453,10 +558,26 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/volunteer_group_description"
                 style="@style/charity_description"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tvOpenLinkNineCharity"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivNineCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleNineCharity" />
+
+            <TextView
+                android:id="@+id/tvOpenLinkNineCharity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_normal"
+                android:layout_marginTop="@dimen/space_normal"
+                android:textColor="#2F80ED"
+                android:drawablePadding="8dp"
+                android:text="@string/open_link"
+                style="@style/charity_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivNineCharity"
+                app:layout_constraintTop_toBottomOf="@+id/tvDescNineCharity"
+                app:drawableEndCompat="@drawable/row_blue"
+                android:layout_marginBottom="@dimen/space_24dp"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
