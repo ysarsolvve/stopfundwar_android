@@ -13,7 +13,7 @@
         android:padding="@dimen/space_normal"
         tools:context=".presentation.charity.view.CharityFragment">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/title"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivFirstCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleFirstCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivFirstCharity"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvDescFirstCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivFirstCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleFirstCharity" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvOpenLinkCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,7 +107,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/firstCharity">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivSecondCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleSecondCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -128,7 +128,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivSecondCharity"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvDescSecondCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -141,7 +141,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivSecondCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleSecondCharity" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvOpenLinkSecondCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -167,7 +167,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/secondCharity">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivThirdCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -179,7 +179,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleThirdCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -190,7 +190,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivThirdCharity"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvDescThirdCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -203,7 +203,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivThirdCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleThirdCharity" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvOpenLinkThirdCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -229,7 +229,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/thirdCharity">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivFourthCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -239,7 +239,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleFourthCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -250,7 +250,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivFourthCharity"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvDescFourthCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -263,7 +263,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivFourthCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleFourthCharity" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvOpenLinkFourthCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -289,7 +289,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fourthCharity">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivFifthCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -299,7 +299,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleFifthCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -310,7 +310,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivFifthCharity"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvDescFifthCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -323,7 +323,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivFifthCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleFifthCharity" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvOpenLinkFifthCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -349,7 +349,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fifthCharity">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivSixCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -359,7 +359,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleSixCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -370,7 +370,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivSixCharity"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvDescSixCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -383,7 +383,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivSixCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleSixCharity" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvOpenLinkSixCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -409,7 +409,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sixCharity">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivSevenCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -419,7 +419,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleSevenCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -430,7 +430,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivSevenCharity"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvDescSevenCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -442,7 +442,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivSevenCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleSevenCharity" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvOpenLinkSevenCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -468,7 +468,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sevenCharity">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivEightCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -478,7 +478,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleEightCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -490,7 +490,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivEightCharity"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvDescEightCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -503,7 +503,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivEightCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleEightCharity" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvOpenLinkEightCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -529,7 +529,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/eightCharity">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivNineCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -539,7 +539,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleNineCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -550,7 +550,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivNineCharity"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvDescNineCharity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -563,7 +563,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivNineCharity"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitleNineCharity" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvOpenLinkNineCharity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

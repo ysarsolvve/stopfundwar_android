@@ -27,7 +27,7 @@ class PermissionsFragment : Fragment() {
     @Inject
     lateinit var navigator: Navigator
     private val requestCameraPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission(),    // contract for requesting 1 permission
+        ActivityResultContracts.RequestPermission(),
         ::onGotCameraPermissionResult
     )
 

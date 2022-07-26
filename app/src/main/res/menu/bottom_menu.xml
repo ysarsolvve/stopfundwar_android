@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/companiesFragment"
         android:icon="@drawable/companies"
-        android:title="List" />
+        android:title="@string/dashboard_list_item"/>
     <item
         android:id="@+id/cameraFragment"
         android:icon="@drawable/camera"
-        android:title="Scan"  />
+        android:title="@string/dashboard_scan_item"/>
     <item
         android:id="@+id/charityFragment"
         android:icon="@drawable/charity"
-        android:title="Charity"  />
+        android:title="@string/dashboard_charity_item"/>
 </menu>

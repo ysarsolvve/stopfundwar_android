@@ -12,17 +12,11 @@ import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.databinding.FragmentCompaniesBinding
 import sarzhane.e.stopfundwar_android.domain.companies.Company
 import sarzhane.e.stopfundwar_android.domain.companies.DataModel
-import sarzhane.e.stopfundwar_android.presentation.camera.info.camera.InfoDialogFragment
-import sarzhane.e.stopfundwar_android.presentation.camera.info.companies.InfoCompaniesFragment
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult
+import sarzhane.e.stopfundwar_android.presentation.companies.info.InfoCompaniesFragment
 import sarzhane.e.stopfundwar_android.presentation.companies.viewmodel.CompaniesViewModel
 import sarzhane.e.stopfundwar_android.util.afterTextChanged
 import sarzhane.e.stopfundwar_android.util.exhaustive
-import sarzhane.e.stopfundwar_android.util.fastsroll.FastScrollItemIndicator
-import sarzhane.e.stopfundwar_android.util.fastsroll.FastScrollerView
-import sarzhane.e.stopfundwar_android.util.toGone
-import sarzhane.e.stopfundwar_android.util.toVisible
-import java.util.*
 
 
 @AndroidEntryPoint
@@ -48,9 +42,9 @@ class CompaniesFragment : Fragment(R.layout.fragment_companies) {
             viewModel.onNewQuery(searchInput, selectedStatusType)
             filter = selectedStatusType
         }
-        binding.sampleBasicFastscrollerThumb.apply {
-            setupWithFastScroller(binding.sampleBasicFastscroller)
-        }
+//        binding.sampleBasicFastscrollerThumb.apply {
+//            setupWithFastScroller(binding.sampleBasicFastscroller)
+//        }
     }
 
     private fun handleCompanies(state: CompaniesResult) {
@@ -58,14 +52,14 @@ class CompaniesFragment : Fragment(R.layout.fragment_companies) {
             is CompaniesResult.SuccessResult -> {
                 val sortedList = sortAlphabetList(state.result)
                 if (sortedList.size< 10){
-                    binding.sampleBasicFastscroller.toGone()
-                    binding.sampleBasicFastscrollerThumb.toGone()
+//                    binding.sampleBasicFastscroller.toGone()
+//                    binding.sampleBasicFastscrollerThumb.toGone()
                 }else{
-                    binding.sampleBasicFastscroller.toVisible()
-                    binding.sampleBasicFastscrollerThumb.toVisible()
+//                    binding.sampleBasicFastscroller.toVisible()
+//                    binding.sampleBasicFastscrollerThumb.toVisible()
                 }
                 companiesAdapter.submitList(sortedList)
-                setUpFastScrollView(sortedList)
+//                setUpFastScrollView(sortedList)
             }
             is CompaniesResult.ErrorResult -> {
             }
@@ -75,31 +69,31 @@ class CompaniesFragment : Fragment(R.layout.fragment_companies) {
         }.exhaustive
     }
 
-    private fun setUpFastScrollView(sortedList: List<DataModel>){
-        if (isInitialize)return
-        binding.sampleBasicFastscroller.apply {
-            setupWithRecyclerView(
-                binding.companiesList,
-                { position ->
-                    sortedList[position]
-                        .let { item ->
-                            when (item) {
-                                is DataModel.Header -> FastScrollItemIndicator.Text(item.title)
-                                is DataModel.Company ->
-                                    FastScrollItemIndicator.Text(
-                                        item.let {
-                                            it.brandName!!
-                                                .substring(0, 1)
-                                                .toUpperCase(Locale.ROOT)
-                                        }
-                                    )
-                            }
-                        }
-                }
-            )
-        }
-        isInitialize = true
-    }
+//    private fun setUpFastScrollView(sortedList: List<DataModel>){
+//        if (isInitialize)return
+//        binding.sampleBasicFastscroller.apply {
+//            setupWithRecyclerView(
+//                binding.companiesList,
+//                { position ->
+//                    sortedList[position]
+//                        .let { item ->
+//                            when (item) {
+//                                is DataModel.Header -> FastScrollItemIndicator.Text(item.title)
+//                                is DataModel.Company ->
+//                                    FastScrollItemIndicator.Text(
+//                                        item.let {
+//                                            it.brandName!!
+//                                                .substring(0, 1)
+//                                                .toUpperCase(Locale.ROOT)
+//                                        }
+//                                    )
+//                            }
+//                        }
+//                }
+//            )
+//        }
+//        isInitialize = true
+//    }
 
     private fun sortAlphabetList(list: List<Company>): List<DataModel> {
         val localList = mutableListOf<DataModel>()

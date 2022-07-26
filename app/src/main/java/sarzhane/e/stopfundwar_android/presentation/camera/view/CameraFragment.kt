@@ -4,6 +4,7 @@ package sarzhane.e.stopfundwar_android.presentation.camera.view
 import android.annotation.SuppressLint
 import android.graphics.*
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.util.Size
 import android.view.View
@@ -29,7 +30,7 @@ import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
 import sarzhane.e.stopfundwar_android.databinding.FragmentCameraBinding
 import sarzhane.e.stopfundwar_android.presentation.PermissionsFragment
-import sarzhane.e.stopfundwar_android.presentation.camera.info.camera.InfoDialogFragment
+import sarzhane.e.stopfundwar_android.presentation.camera.info.InfoDialogFragment
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CameraViewModel
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult
 import sarzhane.e.stopfundwar_android.tflite.ObjectDetectionHelper
@@ -65,7 +66,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     private var colors = mapOf<Int,Int>()
 
     private val tfImageProcessor by lazy {
-        val cropSize = minOf(bitmapBuffer.width, bitmapBuffer.height)
         ImageProcessor.Builder()
             .add(
                 ResizeOp(
@@ -106,6 +106,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         colors = viewModel.getColors()
+        Log.d("CameraSuper", "onCreate")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -115,6 +116,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         setupReviewsList()
         setupCameraFlash()
         pauseAnalysis = false
+        Log.d("CameraSuper", "onViewCreated")
     }
 
 
@@ -126,7 +128,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                 Log.d("EmptyResult", "SuccessResult ")
                 if (state.result.first().statusRate == "F"||state.result.first().statusRate == "D") binding.alert.itemAlert.toVisible()
                 else binding.alert.itemAlert.toGone()
-                binding.skeleton.skeletonLooking.toGone()
+                binding.skeleton.skeletonItem.toGone()
                 binding.rvRecognitions.toVisible()
                 brandAdapter.submitList(listOf(state.result.first()))
             }
@@ -135,14 +137,14 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
             is CompaniesResult.EmptyResult -> {
                 counter++
                 Log.d("EmptyResult", "EmptyResult ")
-                if (counter in 21..99){
+                if (counter in 21..79){
                     Log.d("EmptyResult", "EmptyResult counter>20 $counter")
                     binding.alert.itemAlert.toGone()
                     binding.rvRecognitions.toGone()
-                    binding.skeleton.skeletonLooking.toVisible()
+                    binding.skeleton.skeletonItem.toVisible()
                     binding.skeleton.tvStatus.text = "Looking for brand logo..."
                 }
-                else if (counter > 100){
+                else if (counter > 80){
                     Log.d("EmptyResult", "EmptyResult counter>100 $counter")
                     binding.skeleton.tvStatus.text = "Try to detect logo on other product..."}
                 else return
@@ -159,9 +161,9 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         } else {
             bindCameraUseCases()
         }
+        Log.d("CameraSuper", "onResume")
     }
 
-    /** Declare and bind preview and analysis use cases */
     @SuppressLint("UnsafeExperimentalUsageError")
     private fun bindCameraUseCases() = binding.viewFinder.post {
 
@@ -198,6 +200,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                 }
 
                 // Early exit: image analysis is in paused state
+                Log.d("CameraSuper", "pauseAnalysis $pauseAnalysis")
                 if (pauseAnalysis) {
                     image.close()
                     return@setAnalyzer
@@ -338,6 +341,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         pauseAnalysis = true
         super.onDestroyView()
         Timber.i("onDestroyView()")
+        Log.d("CameraSuper", "onDestroyView")
     }
 
     override fun onDestroy() {
@@ -349,6 +353,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         nnApiDelegate.close()
         super.onDestroy()
         Timber.i("onDestroy()")
+        Log.d("CameraSuper", "onDestroy")
     }
 
     private fun setupReviewsList() {
@@ -369,6 +374,16 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     private fun showInfoDialogFragment() {
         val dialogFragment = InfoDialogFragment.newInstance()
         dialogFragment.show(childFragmentManager, InfoDialogFragment.TAG)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("CameraSuper", "onPause")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("CameraSuper", "onStop")
     }
 
     companion object {

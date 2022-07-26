@@ -1,4 +1,4 @@
-package sarzhane.e.stopfundwar_android.presentation.camera.info.camera
+package sarzhane.e.stopfundwar_android.presentation.camera.info
 
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +14,7 @@ RecyclerView.Adapter<InfoItemsAdapter.InfoItemViewHolder>(){
 
     inner class InfoItemViewHolder(view: View) : RecyclerView.ViewHolder(view){
 
-        private val imageInfo = view.findViewById<ImageView>(R.id.imageOnboarding)
+        private val imageInfo = view.findViewById<ImageView>(R.id.imageOnboard)
         private val textTitle = view.findViewById<TextView>(R.id.textTitle)
 
         fun bind(infoItem: InfoItem){

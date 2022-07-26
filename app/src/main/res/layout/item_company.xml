@@ -66,7 +66,7 @@
         android:layout_height="65dp"
         android:scaleType="fitCenter"
         android:layout_marginTop="@dimen/space_normal"
-        tools:src="@drawable/splash_logo_vector"
+        tools:src="@drawable/splash_logo"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/barrier"

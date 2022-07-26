@@ -4,7 +4,8 @@ import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import sarzhane.e.stopfundwar_android.data.companies.CompaniesRepository
-import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult.*
+import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult.EmptyResult
+import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult.SuccessResult
 import javax.inject.Inject
 
 @HiltViewModel

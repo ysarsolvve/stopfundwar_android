@@ -1,23 +1,53 @@
 <resources>
+    <!--  App name -->
     <string name="app_name">stopfundwar_android</string>
-    <string name="splash_text">STOP FUNDING WAR</string>
-    <string name="hint_search_query">Search</string>
-    <string name="chip_all">All</string>
-    <string name="chip_digging_in">Digging In</string>
-    <string name="chip_buying_time">Buying Time</string>
-    <string name="chip_russian">Russian</string>
-    <string name="chip_scaling_back">Scaling Back</string>
-    <string name="chip_suspension">Suspension</string>
-    <string name="chip_withdrawal">Withdrawal</string>
-    <string name="chip_ukrainian">Ukrainian</string>
+
+    <!--  Onboard  -->
+    <string name="onboard_first_title">Every day Civilians\nare dying in Ukraine</string>
+    <string name="onboard_second_title">Every day Russia\nsends new troops</string>
+    <string name="onboard_third_title">Help the Russian\neconomy to collapse\nfaster</string>
+    <string name="onboard_first_description">We do not support brands that help\nRussian aggression</string>
+    <string name="onboard_second_description">Our app was created to destroy\nRussia’s economy</string>
+    <string name="onboard_third_description">Make your own decision whether to\nbuy brands that support war.</string>
+
+    <!--  Permission  -->
+    <string name="camera_permission_granted" translatable="false">Camera permission has been granted</string>
+    <string name="permissions_denied_forever" translatable="false">Permissions are denied forever</string>
+    <string name="permission_denied_forever_message" translatable="false">"You have denied permissions forever. You can change your decision in the app settings.\n\nWould you like to open app settings?"</string>
+    <string name="permission_denied" translatable="false">Permission denied</string>
+    <string name="open" translatable="false">Open</string>
+
+    <!--  Camera screen dialog data  -->
+    <string name="camera_dialog_first_title">Choose the item you are interested in</string>
+    <string name="camera_dialog_second_title">Point your camera at a logo</string>
+    <string name="camera_dialog_third_title">Wait for the indicator to appear on the logo</string>
+    <string name="camera_dialog_fourth_title">Indicators can be of three different colors</string>
+    <string name="camera_dialog_fifth_title">The meaning of the colors.</string>
+    <string name="camera_dialog_six_title">The meaning of the colors.</string>
+
+    <!--  Camera screen -->
+    <string name="skeleton_brand_name">Looking for brand logo…</string>
+    <string name="alert_text">By paying for this product you sponsor the russian army!</string>
+
+    <!--  Dashboard -->
+    <string name="dashboard_list_item">List</string>
+    <string name="dashboard_scan_item">Scan</string>
+    <string name="dashboard_charity_item">Charity</string>
+
+    <!--  Charity screen dialog data -->
+    <string name="charity_dialog_english" translatable="false">English</string>
+    <string name="charity_dialog_ukraine" translatable="false">Українська</string>
+    <string name="charity_dialog_title">Select Language</string>
+
+    <!--  Charity screen -->
     <string name="charity_for_ukraine">Charity for Ukraine</string>
     <string name="national_bank_of_ukraine">National Bank of Ukraine</string>
     <string name="come_back_alive">Come back alive</string>
-    <string name="army_sos">Army SOS</string>
-    <string name="monobank">Monobank</string>
+    <string name="army_sos" translatable="false">Army SOS</string>
+    <string name="monobank" translatable="false">Monobank</string>
     <string name="nova_poshta">Nova Poshta</string>
-    <string name="unicef">UNICEF</string>
-    <string name="voices">Voices</string>
+    <string name="unicef" translatable="false">UNICEF</string>
+    <string name="voices" translatable="false">Voices</string>
     <string name="charitable_foundation_of_sergii_pritula">Charitable Foundation of Sergii Pritula</string>
     <string name="lions_on_the_suv">Lions on the SUV</string>
     <string name="the_national_bank_description">The National Bank of Ukraine has decided to open a special fundraising account to support the Armed Forces of Ukraine.</string>
@@ -29,13 +59,22 @@
     <string name="help_the_children">Help the children</string>
     <string name="serhiy_prytula_description">Serhiy Prytula has been helping the Ukrainian Army as a private volunteer since Russia occupied Crimea and Donbas in 2014.</string>
     <string name="volunteer_group_description">Volunteer group that helps the military with equipment</string>
-    <string name="list_of_companies">List of companies</string>
-    <string name="camera_permission_granted">Camera permission has been granted</string>
-    <string name="permissions_denied_forever">Permissions are denied forever</string>
-    <string name="permission_denied">Permission denied</string>
-    <string name="open">Open</string>
     <string name="open_link">Open link</string>
-    <string name="permission_denied_forever_message">"You have denied permissions forever. You can change your decision in the app settings.\n\nWould you like to open app settings?"</string>
-    <string name="skeleton_brand_name">Looking for brand logo...</string>
-    <string name="alert_text">By paying for this product you sponsor the russian army!</string>
+
+    <!--  Company screen dialog data -->
+    <string name="company_dialog_text">The data for the companies list collected from the Yale school of management</string>
+    <string name="company_dialog_link_text">Yale school of management</string>
+
+    <!--  Company screen  -->
+    <string name="list_of_companies">List of companies</string>
+    <string name="hint_search_query">Search</string>
+    <string name="chip_all">All</string>
+    <string name="chip_digging_in">Digging In</string>
+    <string name="chip_buying_time">Buying Time</string>
+    <string name="chip_continue">Continue business as usual</string>
+    <string name="chip_scaling_back">Scaling Back</string>
+    <string name="chip_suspension">Suspension</string>
+    <string name="chip_withdrawal">Withdrawal</string>
+
+
 </resources>

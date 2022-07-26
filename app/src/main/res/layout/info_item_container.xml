@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools">
 
 <androidx.appcompat.widget.AppCompatImageView
-    android:id="@+id/imageOnboarding"
-    android:layout_width="match_parent"
+    android:id="@+id/imageOnboard"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:scaleType="fitCenter"
+    android:scaleType="fitXY"
     android:contentDescription="@string/app_name"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toTopOf="@id/guideline"
-    tools:src="@drawable/first"/>
+    tools:src="@drawable/info_third"/>
 
 <androidx.constraintlayout.widget.Guideline
     android:id="@+id/guideline"
@@ -24,12 +25,11 @@ xmlns:tools="http://schemas.android.com/tools">
     android:orientation="horizontal"
     app:layout_constraintGuide_percent="0.55" />
 
-<TextView
+<androidx.appcompat.widget.AppCompatTextView
     android:id="@+id/textTitle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="50dp"
-    android:gravity="center"
+    android:layout_marginTop="30dp"
     android:textSize="28sp"
     android:fontFamily="@font/raleway700"
     android:textColor="@color/black"

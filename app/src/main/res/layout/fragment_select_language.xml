@@ -7,10 +7,10 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/tvSelectedLangueage"
+        android:id="@+id/tvSelectedLanguage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Select Language"
+        android:text="@string/charity_dialog_title"
         android:textColor="@color/black"
         android:fontFamily="@font/raleway700"
         android:textSize="18sp"
@@ -24,22 +24,22 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSelectedLangueage">
+        app:layout_constraintTop_toBottomOf="@+id/tvSelectedLanguage">
         <RadioButton
-            android:id="@+id/radioVibrateRun"
+            android:id="@+id/rbEnglish"
+            android:checked="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
             android:clickable="true"
             android:buttonTint="@color/black"
             android:textColor="@color/black"
             android:fontFamily="@font/raleway700"
             android:textSize="18sp"
             android:layout_marginTop="@dimen/space_24dp"
-            android:text="English"
+            android:text="@string/charity_dialog_english"
             android:focusable="true" />
         <RadioButton
-            android:id="@+id/radioVibrateStop"
+            android:id="@+id/rbUkrainian"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="@color/black"
@@ -49,10 +49,10 @@
             android:textSize="18sp"
             android:clickable="true"
             android:focusable="true"
-            android:text="Українська" />
+            android:text="@string/charity_dialog_ukraine" />
     </RadioGroup>
     <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/buttonGetStarted"
+        android:id="@+id/btnGetStarted"
         android:background="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

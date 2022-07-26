@@ -111,10 +111,7 @@ fun View.delayOnLifecycle(
     }
 }
 
-/**
- * Call this method (in onActivityCreated or later)
- * to make the dialog near-full screen.
- */
 fun DialogFragment.setFullScreen() {
     dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 }
+

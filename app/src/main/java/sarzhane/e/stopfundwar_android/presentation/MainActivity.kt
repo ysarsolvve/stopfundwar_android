@@ -6,13 +6,14 @@ import android.view.WindowManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import sarzhane.e.stopfundwar_android.R
+import sarzhane.e.stopfundwar_android.core.application.BaseActivity
 import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.core.navigation.SplashScreen
 import sarzhane.e.stopfundwar_android.databinding.ActivityMainBinding
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(R.layout.activity_main) {
+class MainActivity : BaseActivity() {
 
     @Inject
     lateinit var navigator: Navigator
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         if (savedInstanceState == null) {
             navigator.navigateTo(

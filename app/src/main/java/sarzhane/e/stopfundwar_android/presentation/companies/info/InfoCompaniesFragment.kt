@@ -1,6 +1,5 @@
-package sarzhane.e.stopfundwar_android.presentation.camera.info.companies
+package sarzhane.e.stopfundwar_android.presentation.companies.info
 
-import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -26,13 +25,12 @@ class InfoCompaniesFragment : DialogFragment(R.layout.fragment_companies_info) {
 
     private val binding by viewBinding(FragmentCompaniesInfoBinding::bind)
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnDismiss.setOnClickListener { dismiss() }
-        val spannableString = "The data for the companies list collected from the Yale school of management".makeLinks(
-            "Yale school of management",
-            resources.getColor(androidx.appcompat.R.color.material_deep_teal_200)
+        val spannableString = getString(R.string.company_dialog_text).makeLinks(
+            getString(R.string.company_dialog_link_text),
+            resources.getColor(androidx.appcompat.R.color.material_deep_teal_200,null)
         )
         binding.infoText.movementMethod = LinkMovementMethod.getInstance()
         binding.infoText.setText(spannableString, TextView.BufferType.SPANNABLE)
@@ -47,6 +45,7 @@ class InfoCompaniesFragment : DialogFragment(R.layout.fragment_companies_info) {
             }
             override fun onClick(view: View) {
                 webNavigator.navigateTo(YALE_LINK)
+                dismiss()
             }
         }
         val start = indexOf(phrase)
@@ -60,12 +59,11 @@ class InfoCompaniesFragment : DialogFragment(R.layout.fragment_companies_info) {
         return spannableString
     }
 
-
     companion object {
         private const val YALE_LINK = "https://som.yale.edu/story/2022/over-1000-companies-have-curtailed-operations-russia-some-remain"
         fun newInstance(): InfoCompaniesFragment = InfoCompaniesFragment()
 
         @JvmStatic
-        val TAG = InfoCompaniesFragment::class.java.simpleName
+        val TAG: String = InfoCompaniesFragment::class.java.simpleName
     }
 }

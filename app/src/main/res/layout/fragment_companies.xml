@@ -77,10 +77,10 @@
 
                 <com.google.android.material.chip.Chip
                     style="@style/CustomRedChipStyle"
-                    android:id="@+id/chipRussian"
+                    android:id="@+id/chipContinue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/chip_russian"/>
+                    android:text="@string/chip_continue"/>
 
                 <com.google.android.material.chip.Chip
                     style="@style/CustomOrangeChipStyle"
@@ -102,13 +102,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chip_withdrawal"/>
-
-                <com.google.android.material.chip.Chip
-                    style="@style/CustomGreenChipStyle"
-                    android:id="@+id/chipUkrainian"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/chip_ukrainian"/>
 
             </com.google.android.material.chip.ChipGroup>
         </LinearLayout>
@@ -148,21 +141,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchInput" />
 
-    <sarzhane.e.stopfundwar_android.util.fastsroll.FastScrollerView
-        android:id="@+id/sample_basic_fastscroller"
-        android:layout_width="12dp"
-        android:layout_height="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchInput" />
+<!--    <sarzhane.e.stopfundwar_android.util.fastsroll.FastScrollerView-->
+<!--        android:id="@+id/sample_basic_fastscroller"-->
+<!--        android:layout_width="12dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/searchInput" />-->
 
-    <sarzhane.e.stopfundwar_android.util.fastsroll.FastScrollerThumbView
-        android:id="@+id/sample_basic_fastscroller_thumb"
-        android:layout_width="40dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintBottom_toBottomOf="@+id/sample_basic_fastscroller"
-        app:layout_constraintEnd_toStartOf="@+id/sample_basic_fastscroller"
-        app:layout_constraintTop_toTopOf="@+id/sample_basic_fastscroller"
-        />
+<!--    <sarzhane.e.stopfundwar_android.util.fastsroll.FastScrollerThumbView-->
+<!--        android:id="@+id/sample_basic_fastscroller_thumb"-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginEnd="32dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/sample_basic_fastscroller"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/sample_basic_fastscroller"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/sample_basic_fastscroller"-->
+<!--        />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

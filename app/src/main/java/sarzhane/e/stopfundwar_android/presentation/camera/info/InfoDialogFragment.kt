@@ -1,4 +1,4 @@
-package sarzhane.e.stopfundwar_android.presentation.camera.info.camera
+package sarzhane.e.stopfundwar_android.presentation.camera.info
 
 import android.os.Bundle
 import android.view.View
@@ -10,27 +10,21 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
-import dagger.hilt.android.AndroidEntryPoint
 import sarzhane.e.stopfundwar_android.R
-import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.databinding.FragmentInfoPagerBinding
 import sarzhane.e.stopfundwar_android.util.setFullScreen
-import javax.inject.Inject
+import sarzhane.e.stopfundwar_android.util.setWidthPercent
 
-@AndroidEntryPoint
+
 class InfoDialogFragment : DialogFragment(R.layout.fragment_info_pager) {
     private lateinit var infoItemsAdapter: InfoItemsAdapter
     private lateinit var indicatorsContainer: LinearLayout
-
-    @Inject
-    lateinit var navigator: Navigator
-
+    
     private val binding by viewBinding(FragmentInfoPagerBinding::bind)
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setFullScreen()
+        setWidthPercent(95)
         setInfoItems()
         setupIndicators()
         setCurrentIndicator(0)
@@ -41,27 +35,27 @@ class InfoDialogFragment : DialogFragment(R.layout.fragment_info_pager) {
             listOf(
                 InfoItem(
                     infoImage = R.drawable.info_first,
-                    title = "Choose the item you are interested in",
+                    title = getString(R.string.camera_dialog_first_title)
                 ),
                 InfoItem(
                     infoImage = R.drawable.info_second,
-                    title = "Point the camera at the logo",
+                    title = getString(R.string.camera_dialog_second_title),
                 ),
                 InfoItem(
                     infoImage = R.drawable.info_third,
-                    title = "You will see a color indicator on the logo",
+                    title = getString(R.string.camera_dialog_third_title),
                 ),
                 InfoItem(
                     infoImage = R.drawable.info_fourth,
-                    title = "You will see a color indicator on the logo",
+                    title = getString(R.string.camera_dialog_fourth_title),
                 ),
                 InfoItem(
                     infoImage = R.drawable.info_fifth,
-                    title = "Different colors - different statuses of the companies",
+                    title = getString(R.string.camera_dialog_fifth_title),
                 ),
                 InfoItem(
                     infoImage = R.drawable.info_six,
-                    title = "Meaning of colors",
+                    title = getString(R.string.camera_dialog_six_title),
                 ),
 
             )
@@ -78,7 +72,7 @@ class InfoDialogFragment : DialogFragment(R.layout.fragment_info_pager) {
 
         (infoViewPager.getChildAt(0) as RecyclerView).overScrollMode =
             RecyclerView.OVER_SCROLL_NEVER
-        binding.buttonGetStarted.setOnClickListener { dismiss() }
+        binding.btnCloseInfo.setOnClickListener { dismiss() }
     }
 
     private fun setupIndicators(){
@@ -128,6 +122,6 @@ class InfoDialogFragment : DialogFragment(R.layout.fragment_info_pager) {
         fun newInstance(): InfoDialogFragment = InfoDialogFragment()
 
         @JvmStatic
-        val TAG = InfoDialogFragment::class.java.simpleName
+        val TAG: String = InfoDialogFragment::class.java.simpleName
     }
 }

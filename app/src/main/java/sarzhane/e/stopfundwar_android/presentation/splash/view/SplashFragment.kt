@@ -2,7 +2,6 @@ package sarzhane.e.stopfundwar_android.presentation.splash.view
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
@@ -11,7 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
-import sarzhane.e.stopfundwar_android.core.navigation.ViewPagerScreen
+import sarzhane.e.stopfundwar_android.core.navigation.OnboardScreen
 import sarzhane.e.stopfundwar_android.presentation.splash.viewmodel.SplashViewModel
 import sarzhane.e.stopfundwar_android.util.observe
 
@@ -31,7 +30,7 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         observe(viewModel.doneCommand) {
             when (onBoardingFinished()) {
                 true -> navigator.navigateTo(screen = PermissionsScreen(), addToBackStack = false)
-                false -> navigator.navigateTo(screen = ViewPagerScreen(), addToBackStack = false)
+                false -> navigator.navigateTo(screen = OnboardScreen(), addToBackStack = false)
             }
         }
         observe(viewModel.errorsStream) {
@@ -47,6 +46,7 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         val sharedPref = requireActivity().getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
         return sharedPref.getBoolean("Finished", false)
     }
+
 
     companion object {
 

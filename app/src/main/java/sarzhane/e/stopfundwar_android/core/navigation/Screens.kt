@@ -3,7 +3,7 @@ package sarzhane.e.stopfundwar_android.core.navigation
 import androidx.fragment.app.Fragment
 import sarzhane.e.stopfundwar_android.presentation.PermissionsFragment
 import sarzhane.e.stopfundwar_android.presentation.dashboard.view.DashboardFragment
-import sarzhane.e.stopfundwar_android.presentation.onboarding.ViewPagerFragment
+import sarzhane.e.stopfundwar_android.presentation.onboard.OnboardFragment
 import sarzhane.e.stopfundwar_android.presentation.splash.view.SplashFragment
 
 
@@ -19,9 +19,9 @@ class SplashScreen : Screen {
     override fun destination(): Fragment = SplashFragment.newInstance()
 }
 
-class ViewPagerScreen : Screen {
+class OnboardScreen : Screen {
 
-    override fun destination(): Fragment = ViewPagerFragment.newInstance()
+    override fun destination(): Fragment = OnboardFragment.newInstance()
 }
 
 class HomeScreen : Screen {

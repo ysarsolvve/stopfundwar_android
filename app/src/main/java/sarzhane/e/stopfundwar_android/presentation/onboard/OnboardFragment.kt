@@ -1,4 +1,4 @@
-package sarzhane.e.stopfundwar_android.presentation.onboarding
+package sarzhane.e.stopfundwar_android.presentation.onboard
 
 import android.content.Context
 import android.os.Bundle
@@ -18,13 +18,9 @@ import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
 import sarzhane.e.stopfundwar_android.databinding.FragmentViewPagerBinding
 import javax.inject.Inject
 
-
-/**
- * Contains the data that you want to display
- */
 @AndroidEntryPoint
-class ViewPagerFragment : Fragment(R.layout.fragment_view_pager) {
-    private lateinit var onboardingItemsAdapter: OnboardingItemsAdapter
+class OnboardFragment : Fragment(R.layout.fragment_view_pager) {
+    private lateinit var onboardItemsAdapter: OnboardItemsAdapter
     private lateinit var indicatorsContainer: LinearLayout
 
     @Inject
@@ -34,42 +30,35 @@ class ViewPagerFragment : Fragment(R.layout.fragment_view_pager) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setOnboardingItems()
+        setOnboardItems()
         setupIndicators()
         setCurrentIndicator(0)
     }
 
-    private fun setOnboardingItems(){
-        onboardingItemsAdapter = OnboardingItemsAdapter(
+    private fun setOnboardItems(){
+        onboardItemsAdapter = OnboardItemsAdapter(
             listOf(
-                OnboardingItem(
-                    onboardingImage = R.drawable.first,
-                    title = "Every day Civilians \n" +
-                            "are dying in Ukraine",
-                    description = "We do not support brands that help\n"+
-                            " Russian aggression"
+                OnboardItem(
+                    onboardImage = R.drawable.first_onboard,
+                    title = getString(R.string.onboard_first_title),
+                    description = getString(R.string.onboard_first_description)
                 ),
-                OnboardingItem(
-                    onboardingImage = R.drawable.second,
-                    title = "Every day Russia\n" +
-                            "sends new troops",
-                    description = "Our app was created to destroy\n" +
-                            " Russia’s economy"
+                OnboardItem(
+                    onboardImage = R.drawable.second_onboard,
+                    title = getString(R.string.onboard_second_title),
+                    description = getString(R.string.onboard_second_description)
                 ),
-                OnboardingItem(
-                    onboardingImage = R.drawable.third,
-                    title = "Help the Russian\n" +
-                            " economy to collapse\n" +
-                            "faster",
-                    description = "Make your own decision whether to\n" +
-                            " buy brands that support war."
+                OnboardItem(
+                    onboardImage = R.drawable.third_onboard,
+                    title = getString(R.string.onboard_third_title),
+                    description = getString(R.string.onboard_third_description)
                 )
 
             )
         )
-        val onboardingViewPager = binding.viewPager
-        onboardingViewPager.adapter = onboardingItemsAdapter
-        onboardingViewPager.registerOnPageChangeCallback(object :
+        val onboardViewPager = binding.viewPager
+        onboardViewPager.adapter = onboardItemsAdapter
+        onboardViewPager.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -77,10 +66,10 @@ class ViewPagerFragment : Fragment(R.layout.fragment_view_pager) {
             }
         })
 
-        (onboardingViewPager.getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-        binding.buttonGetStarted.setOnClickListener {
-            if (onboardingViewPager.currentItem + 1 < onboardingItemsAdapter.itemCount){
-                onboardingViewPager.currentItem += 1
+        (onboardViewPager.getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+        binding.btnCloseInfo.setOnClickListener {
+            if (onboardViewPager.currentItem + 1 < onboardItemsAdapter.itemCount){
+                onboardViewPager.currentItem += 1
             }else{
                 navigator.navigateTo(screen = PermissionsScreen(), addToBackStack = false)
                 onBoardingFinished()
@@ -90,7 +79,7 @@ class ViewPagerFragment : Fragment(R.layout.fragment_view_pager) {
 
     private fun setupIndicators(){
         indicatorsContainer = binding.indicatorsContainer
-        val indicators = arrayOfNulls<ImageView>(onboardingItemsAdapter.itemCount)
+        val indicators = arrayOfNulls<ImageView>(onboardItemsAdapter.itemCount)
         val layoutParams: LinearLayout.LayoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(8,0,8,0)
         for (i in indicators.indices){
@@ -132,7 +121,6 @@ class ViewPagerFragment : Fragment(R.layout.fragment_view_pager) {
     }
 
     private fun onBoardingFinished() {
-        // Using LiveTemplate for SharedPreferences
         val sharedPref = requireActivity().getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
         val editor = sharedPref.edit()
         editor.putBoolean("Finished", true)
@@ -141,7 +129,7 @@ class ViewPagerFragment : Fragment(R.layout.fragment_view_pager) {
 
     companion object {
 
-        fun newInstance(): ViewPagerFragment = ViewPagerFragment()
+        fun newInstance(): OnboardFragment = OnboardFragment()
     }
 
 }
