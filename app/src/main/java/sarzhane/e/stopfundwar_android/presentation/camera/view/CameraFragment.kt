@@ -268,35 +268,35 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
             )
         val cropCanvas = Canvas(emptyCropSizeBitmap)
         //                // Пограничная кисть
-//                val circlePaint = Paint()
-//                circlePaint.isAntiAlias = true
-//                circlePaint.style = Paint.Style.FILL
-//                circlePaint.color = Color.GREEN
-        val boxPaint = Paint()
-        boxPaint.strokeWidth = 5f
-        boxPaint.style = Paint.Style.STROKE
-        boxPaint.color = Color.GREEN
-        // Кисть шрифта
-        val textPain = Paint()
-        textPain.textSize = 50f
-        textPain.color = Color.RED
-        textPain.style = Paint.Style.FILL
+                val circlePaint = Paint()
+                circlePaint.isAntiAlias = true
+                circlePaint.style = Paint.Style.FILL
+                circlePaint.color = Color.GREEN
+//        val boxPaint = Paint()
+//        boxPaint.strokeWidth = 5f
+//        boxPaint.style = Paint.Style.STROKE
+//        boxPaint.color = Color.GREEN
+//        // Кисть шрифта
+//        val textPain = Paint()
+//        textPain.textSize = 50f
+//        textPain.color = Color.RED
+//        textPain.style = Paint.Style.FILL
 
         val labelIds = mutableSetOf<Int>()
 
         for (prediction in predictions) {
             val location = mapOutputCoordinates(prediction.location)
             labelIds.add(prediction.labelId)
-            val label: String = prediction.label
-            val confidence: Float = prediction.score
-            cropCanvas.drawRect(location, boxPaint.apply { boxPaint.color = colors.getValue(prediction.labelId) })
-            cropCanvas.drawText(
-                label + ":" + String.format("%.2f", confidence),
-                location.left,
-                location.top,
-                textPain.apply { textPain.color = colors.getValue(prediction.labelId) }
-            )
-//            cropCanvas.drawCircle(location.centerX(), location.centerY(), 15f, circlePaint.apply { circlePaint.color = colors.getValue(prediction.labelId)})
+//            val label: String = prediction.label
+//            val confidence: Float = prediction.score
+//            cropCanvas.drawRect(location, boxPaint.apply { boxPaint.color = colors.getValue(prediction.labelId) })
+//            cropCanvas.drawText(
+//                label + ":" + String.format("%.2f", confidence),
+//                location.left,
+//                location.top,
+//                textPain.apply { textPain.color = colors.getValue(prediction.labelId) }
+//            )
+            cropCanvas.drawCircle(location.centerX(), location.centerY(), 15f, circlePaint.apply { circlePaint.color = colors.getValue(prediction.labelId)})
         }
         viewModel.getCompany(labelIds.map { it.toString() })
         labelIds.clear()
