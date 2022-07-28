@@ -26,7 +26,8 @@
     <string name="camera_dialog_six_title">The meaning of the colors.</string>
 
     <!--  Camera screen -->
-    <string name="skeleton_brand_name">Looking for brand logo…</string>
+    <string name="skeleton_first_status">Looking for brand logo…</string>
+    <string name="skeleton_second_status">Try to detect logo on other product…</string>
     <string name="alert_text">By paying for this product you sponsor the russian army!</string>
 
     <!--  Dashboard -->
@@ -67,14 +68,14 @@
 
     <!--  Company screen  -->
     <string name="list_of_companies">List of companies</string>
-    <string name="hint_search_query">Search</string>
-    <string name="chip_all">All</string>
-    <string name="chip_digging_in">Digging In</string>
-    <string name="chip_buying_time">Buying Time</string>
-    <string name="chip_continue">Continue business as usual</string>
-    <string name="chip_scaling_back">Scaling Back</string>
-    <string name="chip_suspension">Suspension</string>
-    <string name="chip_withdrawal">Withdrawal</string>
+    <string name="hint_search_query" translatable="false">Search</string>
+    <string name="chip_all" translatable="false">All</string>
+    <string name="chip_digging_in" translatable="false">Digging In</string>
+    <string name="chip_buying_time" translatable="false">Buying Time</string>
+    <string name="chip_continue" translatable="false">Continue business as usual</string>
+    <string name="chip_scaling_back" translatable="false">Scaling Back</string>
+    <string name="chip_suspension" translatable="false">Suspension</string>
+    <string name="chip_withdrawal" translatable="false">Withdrawal</string>
 
 
 </resources>

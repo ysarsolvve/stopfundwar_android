@@ -13,7 +13,8 @@
     <string name="camera_dialog_fourth_title">Індикатор може бути трьох кольорів</string>
     <string name="camera_dialog_fifth_title">Значення кольорів індикатора</string>
     <string name="camera_dialog_six_title">Значення кольорів</string>
-    <string name="skeleton_brand_name">Пошук логотипу…</string>
+    <string name="skeleton_first_status">Пошук логотипу…</string>
+    <string name="skeleton_second_status">Спробуйте розпізнати логотип на інших продуктах…</string>
     <string name="alert_text">Купуючи цей продукт ви фінансуєте російську армію!</string>
     <string name="charity_for_ukraine">Благодійність для України</string>
     <string name="charity_dialog_title">Обрати мову</string>
@@ -38,12 +39,4 @@
     <string name="open_link">Перейти</string>
     <string name="company_dialog_text">Перелік компаній сформований за даними Єльської школи менеджменту</string>
     <string name="company_dialog_link_text">" Єльської школи менеджменту"</string>
-    <string name="hint_search_query">Пошук</string>
-    <string name="chip_all">Всі</string>
-    <string name="chip_digging_in">Працюють</string>
-    <string name="chip_buying_time">Тягнуть час</string>
-    <string name="chip_continue">Продовжують працювати</string>
-    <string name="chip_scaling_back">Зменшують обсяги</string>
-    <string name="chip_suspension">Часткова зупинка</string>
-    <string name="chip_withdrawal">Повна зупинка</string>
 </resources>

@@ -11,10 +11,13 @@ import android.view.View
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
@@ -29,15 +32,16 @@ import sarzhane.e.stopfundwar_android.R
 import sarzhane.e.stopfundwar_android.core.navigation.Navigator
 import sarzhane.e.stopfundwar_android.core.navigation.PermissionsScreen
 import sarzhane.e.stopfundwar_android.databinding.FragmentCameraBinding
+import sarzhane.e.stopfundwar_android.domain.companies.Company
 import sarzhane.e.stopfundwar_android.presentation.PermissionsFragment
 import sarzhane.e.stopfundwar_android.presentation.camera.info.InfoDialogFragment
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CameraViewModel
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult
 import sarzhane.e.stopfundwar_android.tflite.ObjectDetectionHelper
+import sarzhane.e.stopfundwar_android.util.dpToPx
 import sarzhane.e.stopfundwar_android.util.exhaustive
 import sarzhane.e.stopfundwar_android.util.toGone
 import sarzhane.e.stopfundwar_android.util.toVisible
-import timber.log.Timber
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -45,17 +49,14 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CameraFragment : Fragment(R.layout.fragment_camera) {
 
-
     @Inject
     lateinit var navigator: Navigator
-
+    private lateinit var countDownTimer: CountDownTimer
     private val binding by viewBinding(FragmentCameraBinding::bind)
-    private val brandAdapter = BrandAdapter()
     private val viewModel: CameraViewModel by viewModels()
     private lateinit var cameraControl: CameraControl
     private var flashFlag: Boolean = false
     private var pauseAnalysis = false
-    var counter = 0
 
     private lateinit var bitmapBuffer: Bitmap
 
@@ -94,7 +95,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     private val tfInputSize by lazy {
         val inputIndex = 0
         val inputShape = tflite.getInputTensor(inputIndex).shape()
-        Size(inputShape[2], inputShape[1]) // Order of axis is: {1, height, width, 3}
+        Size(inputShape[2], inputShape[1])
     }
     private val detector by lazy {
         ObjectDetectionHelper(
@@ -106,17 +107,14 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         colors = viewModel.getColors()
-        Log.d("CameraSuper", "onCreate")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.ivInfo.setOnClickListener { showInfoDialogFragment() }
         viewModel.searchResult.observe(viewLifecycleOwner, ::handleCompanies)
-        setupReviewsList()
         setupCameraFlash()
         pauseAnalysis = false
-        Log.d("CameraSuper", "onViewCreated")
     }
 
 
@@ -124,35 +122,31 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
         when (state) {
             is CompaniesResult.SuccessResult -> {
-                counter = 0
-                Log.d("EmptyResult", "SuccessResult ")
-                if (state.result.first().statusRate == "F"||state.result.first().statusRate == "D") binding.alert.itemAlert.toVisible()
+                if (::countDownTimer.isInitialized) { countDownTimer.cancel() }
+                if (state.result.first().statusRate == "F" || state.result.first().statusRate == "D") binding.alert.itemAlert.toVisible()
                 else binding.alert.itemAlert.toGone()
                 binding.skeleton.skeletonItem.toGone()
-                binding.rvRecognitions.toVisible()
-                brandAdapter.submitList(listOf(state.result.first()))
+                binding.recognition.recognitionItem.toVisible()
+                bind(state.result.first())
             }
-            is CompaniesResult.ErrorResult -> {
-            }
+            is CompaniesResult.ErrorResult -> {}
             is CompaniesResult.EmptyResult -> {
-                counter++
-                Log.d("EmptyResult", "EmptyResult ")
-                if (counter in 21..79){
-                    Log.d("EmptyResult", "EmptyResult counter>20 $counter")
-                    binding.alert.itemAlert.toGone()
-                    binding.rvRecognitions.toGone()
-                    binding.skeleton.skeletonItem.toVisible()
-                    binding.skeleton.tvStatus.text = "Looking for brand logo..."
-                }
-                else if (counter > 80){
-                    Log.d("EmptyResult", "EmptyResult counter>100 $counter")
-                    binding.skeleton.tvStatus.text = "Try to detect logo on other product..."}
-                else return
-
+                    countDownTimer = object : CountDownTimer(5000, 1000) {
+                        override fun onTick(time: Long) {
+                            if(time<4000){
+                            binding.alert.itemAlert.toGone()
+                            binding.recognition.recognitionItem.toGone()
+                            binding.skeleton.skeletonItem.toVisible()
+                            binding.skeleton.tvStatus.text = getString(R.string.skeleton_first_status)}
+                        }
+                        override fun onFinish() {
+                            binding.skeleton.tvStatus.text = getString(R.string.skeleton_second_status)
+                        }
+                    }.start()
             }
-            CompaniesResult.Loading -> TODO()
         }.exhaustive
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -161,7 +155,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         } else {
             bindCameraUseCases()
         }
-        Log.d("CameraSuper", "onResume")
     }
 
     @SuppressLint("UnsafeExperimentalUsageError")
@@ -200,7 +193,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                 }
 
                 // Early exit: image analysis is in paused state
-                Log.d("CameraSuper", "pauseAnalysis $pauseAnalysis")
                 if (pauseAnalysis) {
                     image.close()
                     return@setAnalyzer
@@ -221,9 +213,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                 if (!pauseAnalysis) {
                     reportPrediction(temp)
                 }
-
-                Log.d("Speed", "predictions $predictions")
-
 
                 // Compute the FPS of the entire pipeline
                 val frameCount = 10
@@ -340,8 +329,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     override fun onDestroyView() {
         pauseAnalysis = true
         super.onDestroyView()
-        Timber.i("onDestroyView()")
-        Log.d("CameraSuper", "onDestroyView")
     }
 
     override fun onDestroy() {
@@ -352,12 +339,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         tflite.close()
         nnApiDelegate.close()
         super.onDestroy()
-        Timber.i("onDestroy()")
-        Log.d("CameraSuper", "onDestroy")
-    }
-
-    private fun setupReviewsList() {
-        binding.rvRecognitions.adapter = brandAdapter
     }
 
     private fun setupCameraFlash() {
@@ -378,12 +359,87 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
     override fun onPause() {
         super.onPause()
-        Log.d("CameraSuper", "onPause")
+        if (::countDownTimer.isInitialized) { countDownTimer.cancel() }
     }
 
-    override fun onStop() {
-        super.onStop()
-        Log.d("CameraSuper", "onStop")
+    fun bind(brand: Company) {
+        setBrand(brand.brandName)
+        setDescription(brand.description)
+        setStatus(brand.statusInfo)
+        setStatusColor(brand.statusRate)
+        setThumbnail(brand.logo)
+    }
+
+    private fun setBrand(brand: String?) {
+        binding.recognition.tvBrandName.text = brand
+    }
+
+    private fun setDescription(brand: String?) {
+        binding.recognition.tvDescription.text = brand
+    }
+
+    private fun setStatus(brand: String?) {
+        binding.recognition.tvStatus.text = brand
+    }
+
+    private fun setStatusColor(brand: String?) {
+        val padding:Number = 8
+        val paddingInPx = padding.dpToPx().toInt()
+        when (brand) {
+            "A","B" -> {
+                binding.recognition.tvStatus.background = ResourcesCompat.getDrawable(
+                    binding.root.resources,
+                    R.drawable.rounded_corner_green,
+                    null
+                )
+                binding.recognition.cvItem.background = ResourcesCompat.getDrawable(
+                    binding.root.resources,
+                    R.drawable.rounded_corner_green,
+                    null
+                )
+                binding.recognition.tvDescription.setTextColor(Color.parseColor("#288818"))
+                binding.recognition.tvStatus.setPadding(paddingInPx)
+            }
+            "C" -> {
+                binding.recognition.tvStatus.background = ResourcesCompat.getDrawable(
+                    binding.root.resources,
+                    R.drawable.rounded_corner_orange,
+                    null
+                )
+                binding.recognition.cvItem.background = ResourcesCompat.getDrawable(
+                    binding.root.resources,
+                    R.drawable.rounded_corner_orange,
+                    null
+                )
+                binding.recognition.tvDescription.setTextColor(Color.parseColor("#C6811A"))
+                binding.recognition.tvStatus.setPadding(paddingInPx)
+            }
+            "F","D" -> {
+                binding.recognition.tvStatus.background = ResourcesCompat.getDrawable(
+                    binding.root.resources,
+                    R.drawable.rounded_corner_red,
+                    null
+                )
+
+                binding.recognition.cvItem.background = ResourcesCompat.getDrawable(
+                    binding.root.resources,
+                    R.drawable.rounded_corner_red,
+                    null
+                )
+                binding.recognition.tvDescription.setTextColor(Color.parseColor("#CF2424"))
+                binding.recognition.tvStatus.setPadding(paddingInPx)
+            }
+        }
+    }
+
+    private fun setThumbnail(brand: String?) {
+        if (brand!!.isEmpty()) return
+        Picasso.get()
+            .load(brand)
+            .placeholder( R.drawable.progress_animation )
+            .fit()
+            .centerInside()
+            .into(binding.recognition.ivBrand)
     }
 
     companion object {

@@ -74,7 +74,7 @@
     <TextView
         android:id="@+id/tvDescription"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         tools:text="Holding Off New Investments/Development"
         android:layout_marginStart="@dimen/space_normal"
         android:textSize="14sp"
@@ -98,8 +98,8 @@
         layout="@layout/item_alert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_normal"
-        app:layout_constraintTop_toBottomOf="@+id/ivBrand"
+        android:layout_marginTop="@dimen/space_medium"
+        app:layout_constraintTop_toBottomOf="@+id/barrierAlert"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
