@@ -18,7 +18,7 @@ class SplashViewModel @Inject constructor(
 
     val errorsStream = SingleLiveEvent<Throwable>()
     val doneCommand = SingleLiveEvent<Unit>()
-    private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         errorsStream.postValue(throwable)
     }
 

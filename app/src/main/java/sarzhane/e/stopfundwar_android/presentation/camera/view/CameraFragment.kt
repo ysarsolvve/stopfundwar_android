@@ -51,15 +51,13 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
     @Inject
     lateinit var navigator: Navigator
+    private lateinit var bitmapBuffer: Bitmap
+    private lateinit var cameraControl: CameraControl
     private lateinit var countDownTimer: CountDownTimer
     private val binding by viewBinding(FragmentCameraBinding::bind)
     private val viewModel: CameraViewModel by viewModels()
-    private lateinit var cameraControl: CameraControl
     private var flashFlag: Boolean = false
     private var pauseAnalysis = false
-
-    private lateinit var bitmapBuffer: Bitmap
-
     private val executor = Executors.newSingleThreadExecutor()
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var imageRotationDegrees: Int = 0
@@ -68,28 +66,20 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
     private val tfImageProcessor by lazy {
         ImageProcessor.Builder()
-            .add(
-                ResizeOp(
-                    tfInputSize.height, tfInputSize.width, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR
-                )
-            )
+            .add(ResizeOp(
+                tfInputSize.height, tfInputSize.width, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
             .add(Rot90Op(-imageRotationDegrees / 90))
             .add(NormalizeOp(127.5f, 127.5f))
             .build()
     }
 
-    private val nnApiDelegate by lazy {
-        NnApiDelegate()
-    }
+    private val nnApiDelegate by lazy { NnApiDelegate() }
 
     private val tflite by lazy {
         val options: Interpreter.Options = Interpreter.Options()
         options.numThreads = 5
         options.useNNAPI = true
-        Interpreter(
-            FileUtil.loadMappedFile(requireContext(), MODEL_PATH),
-            options
-        )
+        Interpreter(FileUtil.loadMappedFile(requireContext(), MODEL_PATH), options)
     }
 
     private val tfInputSize by lazy {
@@ -98,10 +88,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         Size(inputShape[2], inputShape[1])
     }
     private val detector by lazy {
-        ObjectDetectionHelper(
-            tflite,
-            FileUtil.loadLabels(requireContext(), LABELS_PATH)
-        )
+        ObjectDetectionHelper(tflite, FileUtil.loadLabels(requireContext(), LABELS_PATH))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,33 +104,34 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         pauseAnalysis = false
     }
 
-
     private fun handleCompanies(state: CompaniesResult) {
-
         when (state) {
             is CompaniesResult.SuccessResult -> {
+                val rate = state.result.first().statusRate
                 if (::countDownTimer.isInitialized) { countDownTimer.cancel() }
-                if (state.result.first().statusRate == "F" || state.result.first().statusRate == "D") binding.alert.itemAlert.toVisible()
+                if (rate == "F" || rate == "D") binding.alert.itemAlert.toVisible()
                 else binding.alert.itemAlert.toGone()
-                binding.skeleton.skeletonItem.toGone()
                 binding.recognition.recognitionItem.toVisible()
+                binding.skeleton.skeletonItem.toGone()
                 bind(state.result.first())
             }
-            is CompaniesResult.ErrorResult -> {}
             is CompaniesResult.EmptyResult -> {
-                    countDownTimer = object : CountDownTimer(5000, 1000) {
-                        override fun onTick(time: Long) {
-                            if(time<4000){
+                countDownTimer = object : CountDownTimer(6000, 1000) {
+                    override fun onTick(time: Long) {
+                        if (time < 5000) {
                             binding.alert.itemAlert.toGone()
                             binding.recognition.recognitionItem.toGone()
                             binding.skeleton.skeletonItem.toVisible()
-                            binding.skeleton.tvStatus.text = getString(R.string.skeleton_first_status)}
+                            binding.skeleton.tvStatus.text = getString(R.string.skeleton_first_status)
                         }
-                        override fun onFinish() {
-                            binding.skeleton.tvStatus.text = getString(R.string.skeleton_second_status)
-                        }
-                    }.start()
+                    }
+
+                    override fun onFinish() {
+                        binding.skeleton.tvStatus.text = getString(R.string.skeleton_second_status)
+                    }
+                }.start()
             }
+            is CompaniesResult.ErrorResult -> {}
         }.exhaustive
     }
 
@@ -234,11 +222,9 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
             // Apply declared configs to CameraX using the same lifecycle owner
             cameraProvider.unbindAll()
             val camera = cameraProvider.bindToLifecycle(
-                this as LifecycleOwner, cameraSelector, preview, imageAnalysis
-            )
+                this as LifecycleOwner, cameraSelector, preview, imageAnalysis)
 
             cameraControl = camera.cameraControl
-            cameraControl.enableTorch(flashFlag)
 
             // Use the camera object to link our preview use case with the view
             preview.setSurfaceProvider(binding.viewFinder.surfaceProvider)
@@ -272,6 +258,8 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 //        textPain.style = Paint.Style.FILL
 
         val labelIds = mutableSetOf<Int>()
+        val radius:Number = 8
+        val radiusInPx = radius.dpToPx().toInt()
 
         for (prediction in predictions) {
             val location = mapOutputCoordinates(prediction.location)
@@ -285,7 +273,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 //                location.top,
 //                textPain.apply { textPain.color = colors.getValue(prediction.labelId) }
 //            )
-            cropCanvas.drawCircle(location.centerX(), location.centerY(), 15f, circlePaint.apply { circlePaint.color = colors.getValue(prediction.labelId)})
+            cropCanvas.drawCircle(location.centerX(), location.centerY(), radiusInPx.toFloat(), circlePaint.apply { circlePaint.color = colors.getValue(prediction.labelId)})
         }
         viewModel.getCompany(labelIds.map { it.toString() })
         labelIds.clear()
@@ -332,10 +320,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     }
 
     override fun onDestroy() {
-        executor.apply {
-            shutdown()
-            awaitTermination(1000, TimeUnit.MILLISECONDS)
-        }
+        executor.apply { shutdown();awaitTermination(1000, TimeUnit.MILLISECONDS) }
         tflite.close()
         nnApiDelegate.close()
         super.onDestroy()
@@ -363,23 +348,11 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     }
 
     fun bind(brand: Company) {
-        setBrand(brand.brandName)
-        setDescription(brand.description)
-        setStatus(brand.statusInfo)
+        binding.recognition.tvBrandName.text = brand.brandName
+        binding.recognition.tvDescription.text = brand.description
+        binding.recognition.tvStatus.text = brand.statusInfo
         setStatusColor(brand.statusRate)
         setThumbnail(brand.logo)
-    }
-
-    private fun setBrand(brand: String?) {
-        binding.recognition.tvBrandName.text = brand
-    }
-
-    private fun setDescription(brand: String?) {
-        binding.recognition.tvDescription.text = brand
-    }
-
-    private fun setStatus(brand: String?) {
-        binding.recognition.tvStatus.text = brand
     }
 
     private fun setStatusColor(brand: String?) {
