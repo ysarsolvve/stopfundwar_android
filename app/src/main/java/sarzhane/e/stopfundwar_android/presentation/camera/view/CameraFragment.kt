@@ -88,7 +88,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         Size(inputShape[2], inputShape[1])
     }
     private val detector by lazy {
-        ObjectDetectionHelper(tflite, FileUtil.loadLabels(requireContext(), LABELS_PATH))
+        ObjectDetectionHelper(tflite)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -355,10 +355,10 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         setThumbnail(brand.logo)
     }
 
-    private fun setStatusColor(brand: String?) {
+    private fun setStatusColor(status: String?) {
         val padding:Number = 8
         val paddingInPx = padding.dpToPx().toInt()
-        when (brand) {
+        when (status) {
             "A","B" -> {
                 binding.recognition.tvStatus.background = ResourcesCompat.getDrawable(
                     binding.root.resources,
@@ -405,10 +405,10 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         }
     }
 
-    private fun setThumbnail(brand: String?) {
-        if (brand!!.isEmpty()) return
+    private fun setThumbnail(logo: String?) {
+        if (logo?.isEmpty() == true) return
         Picasso.get()
-            .load(brand)
+            .load(logo)
             .placeholder( R.drawable.progress_animation )
             .fit()
             .centerInside()
@@ -419,7 +419,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
         private const val ACCURACY_THRESHOLD = 0.70f
         private const val MODEL_PATH = "model.tflite"
-        private const val LABELS_PATH = "coco_label.txt"
     }
 
 }

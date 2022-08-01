@@ -24,7 +24,7 @@ import org.tensorflow.lite.support.image.TensorImage
 /**
  * Helper class used to communicate between our app and the TF object detection model
  */
-class ObjectDetectionHelper(private val tflite: Interpreter, private val labels: List<String>) {
+class ObjectDetectionHelper(private val tflite: Interpreter) {
 
     /** Abstraction object that wraps a prediction output in an easy to parse way */
     data class ObjectPrediction(val location: RectF, val label: String, val score: Float, val labelId: Int,)
