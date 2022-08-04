@@ -14,6 +14,7 @@ class CameraViewModel @Inject constructor(
     private val companiesRepository: CompaniesRepository
 ) : ViewModel() {
 
+    val modelPath = companiesRepository.modelPath.value
     private val _searchResult = MutableStateFlow<CompaniesResult>(EmptyResult)
     val searchResult: LiveData<CompaniesResult> = _searchResult.asLiveData(viewModelScope.coroutineContext)
 

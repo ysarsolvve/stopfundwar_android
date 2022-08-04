@@ -22,7 +22,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.nnapi.NnApiDelegate
-import org.tensorflow.lite.support.common.FileUtil
 import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
@@ -38,10 +37,7 @@ import sarzhane.e.stopfundwar_android.presentation.camera.info.InfoDialogFragmen
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CameraViewModel
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult
 import sarzhane.e.stopfundwar_android.tflite.ObjectDetectionHelper
-import sarzhane.e.stopfundwar_android.util.dpToPx
-import sarzhane.e.stopfundwar_android.util.exhaustive
-import sarzhane.e.stopfundwar_android.util.toGone
-import sarzhane.e.stopfundwar_android.util.toVisible
+import sarzhane.e.stopfundwar_android.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -79,7 +75,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         val options: Interpreter.Options = Interpreter.Options()
         options.numThreads = 5
         options.useNNAPI = true
-        Interpreter(FileUtil.loadMappedFile(requireContext(), MODEL_PATH), options)
+        Interpreter(loadMappedFile(requireContext(), viewModel.modelPath!!), options)
     }
 
     private val tfInputSize by lazy {
@@ -125,7 +121,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                             binding.skeleton.tvStatus.text = getString(R.string.skeleton_first_status)
                         }
                     }
-
                     override fun onFinish() {
                         binding.skeleton.tvStatus.text = getString(R.string.skeleton_second_status)
                     }
@@ -194,10 +189,16 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
                 // Perform the object detection for the current frame
                 val predictions = detector.predict(tfImage)
-
+                Log.d(
+                    "predictions",
+                    "predictions ${predictions}"
+                )
                 val temp = predictions.filter { it.score > ACCURACY_THRESHOLD }
 
-
+//                Log.d(
+//                    "Speed",
+//                    "temp ${temp}"
+//                )
                 if (!pauseAnalysis) {
                     reportPrediction(temp)
                 }
@@ -243,19 +244,19 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
             )
         val cropCanvas = Canvas(emptyCropSizeBitmap)
         //                // Пограничная кисть
-                val circlePaint = Paint()
-                circlePaint.isAntiAlias = true
-                circlePaint.style = Paint.Style.FILL
-                circlePaint.color = Color.GREEN
-//        val boxPaint = Paint()
-//        boxPaint.strokeWidth = 5f
-//        boxPaint.style = Paint.Style.STROKE
-//        boxPaint.color = Color.GREEN
-//        // Кисть шрифта
-//        val textPain = Paint()
-//        textPain.textSize = 50f
-//        textPain.color = Color.RED
-//        textPain.style = Paint.Style.FILL
+//                val circlePaint = Paint()
+//                circlePaint.isAntiAlias = true
+//                circlePaint.style = Paint.Style.FILL
+//                circlePaint.color = Color.GREEN
+        val boxPaint = Paint()
+        boxPaint.strokeWidth = 5f
+        boxPaint.style = Paint.Style.STROKE
+        boxPaint.color = Color.GREEN
+        // Кисть шрифта
+        val textPain = Paint()
+        textPain.textSize = 50f
+        textPain.color = Color.RED
+        textPain.style = Paint.Style.FILL
 
         val labelIds = mutableSetOf<Int>()
         val radius:Number = 8
@@ -264,16 +265,16 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         for (prediction in predictions) {
             val location = mapOutputCoordinates(prediction.location)
             labelIds.add(prediction.labelId)
-//            val label: String = prediction.label
-//            val confidence: Float = prediction.score
-//            cropCanvas.drawRect(location, boxPaint.apply { boxPaint.color = colors.getValue(prediction.labelId) })
-//            cropCanvas.drawText(
-//                label + ":" + String.format("%.2f", confidence),
-//                location.left,
-//                location.top,
-//                textPain.apply { textPain.color = colors.getValue(prediction.labelId) }
-//            )
-            cropCanvas.drawCircle(location.centerX(), location.centerY(), radiusInPx.toFloat(), circlePaint.apply { circlePaint.color = colors.getValue(prediction.labelId)})
+            val label: String = prediction.label
+            val confidence: Float = prediction.score
+            cropCanvas.drawRect(location, boxPaint.apply { boxPaint.color = colors.getValue(prediction.labelId) })
+            cropCanvas.drawText(
+                label + ":" + String.format("%.2f", confidence),
+                location.left,
+                location.top,
+                textPain.apply { textPain.color = colors.getValue(prediction.labelId) }
+            )
+//            cropCanvas.drawCircle(location.centerX(), location.centerY(), radiusInPx.toFloat(), circlePaint.apply { circlePaint.color = colors.getValue(prediction.labelId)})
         }
         viewModel.getCompany(labelIds.map { it.toString() })
         labelIds.clear()
@@ -417,7 +418,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
     companion object {
 
-        private const val ACCURACY_THRESHOLD = 0.70f
+        private const val ACCURACY_THRESHOLD = 0.40f
         private const val MODEL_PATH = "model.tflite"
     }
 

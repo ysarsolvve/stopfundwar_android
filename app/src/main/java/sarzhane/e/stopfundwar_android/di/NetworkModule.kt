@@ -16,7 +16,7 @@ interface NetworkModule {
 
     @Binds
     @Singleton
-    fun bindMovieDbClient(
+    fun bindCompaniesHttpClient(
         impl: CompaniesHttpClientImpl,
     ): CompaniesHttpClient
 }
@@ -27,5 +27,5 @@ object ApiWrapperModule {
 
     @Provides
     @Singleton
-    fun provideMoviesApi(client: CompaniesHttpClient): CompaniesApi = client.companiesApi
+    fun provideCompaniesApi(client: CompaniesHttpClient): CompaniesApi = client.companiesApi
 }

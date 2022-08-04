@@ -2,18 +2,30 @@ package sarzhane.e.stopfundwar_android.data.companies
 
 
 import android.util.Log
+import com.google.firebase.ml.modeldownloader.CustomModel
+import com.google.firebase.ml.modeldownloader.CustomModelDownloadConditions
+import com.google.firebase.ml.modeldownloader.DownloadType
+import com.google.firebase.ml.modeldownloader.FirebaseModelDownloader
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import sarzhane.e.stopfundwar_android.data.companies.local.CompaniesLocalDataSource
 import sarzhane.e.stopfundwar_android.data.companies.remote.CompaniesRemoteDataSource
 import sarzhane.e.stopfundwar_android.domain.companies.Company
+import sarzhane.e.stopfundwar_android.tflite.ObjectDetectionHelper
 
 
 import javax.inject.Inject
+import kotlin.coroutines.resumeWithException
 
 interface CompaniesRepository {
+    val modelPath: StateFlow<String?>
 
     suspend fun getAllCompanies()
 
     suspend fun getData(): List<Company>
+
+    suspend fun getModel()
 
     fun getColorMap(): Map<Int, Int>
 
@@ -32,6 +44,9 @@ class CompaniesRepositoryImpl @Inject constructor(
 ) : CompaniesRepository {
 
     private val map = mutableMapOf<Int, Int>()
+
+    override val modelPath = MutableStateFlow<String?>(null)
+
 
     override suspend fun getAllCompanies() {
         val companyEntities =
@@ -59,6 +74,22 @@ class CompaniesRepositoryImpl @Inject constructor(
 
     override suspend fun getData(): List<Company> {
         return companiesLocalDataSource.getData().map { it.toModel() }
+    }
+
+    override suspend fun getModel() = suspendCancellableCoroutine <Unit>{ cont ->
+        val conditions = CustomModelDownloadConditions.Builder().build()
+        FirebaseModelDownloader.getInstance()
+            .getModel("model", DownloadType.LOCAL_MODEL_UPDATE_IN_BACKGROUND, conditions)
+            .addOnSuccessListener { model: CustomModel? ->
+                modelPath.value = model?.file?.path
+                Log.d("SplashViewModel","addOnSuccessListener ${model?.file?.path}")
+                cont.resume(Unit){}
+            }
+            .addOnFailureListener {
+                cont.resumeWithException(it)
+                Log.d("SplashViewModel","addOnFailureListener$it")
+      }
+
     }
 
     override fun getColorMap(): Map<Int, Int> = map

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "160252319752",
+    "project_id": "mlpoject-15c44",
+    "storage_bucket": "mlpoject-15c44.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:160252319752:android:6e1f7fd658512adb91d9bd",
+        "android_client_info": {
+          "package_name": "sarzhane.e.stopfundwar_android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "160252319752-hv8suchpc6umpmuvamu211smfha79has.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxhff3rFxXmkFO0CP7bR4vNSynfh1u_oM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "160252319752-hv8suchpc6umpmuvamu211smfha79has.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
