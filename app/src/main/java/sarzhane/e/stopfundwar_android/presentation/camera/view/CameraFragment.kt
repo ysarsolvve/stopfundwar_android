@@ -36,7 +36,9 @@ import sarzhane.e.stopfundwar_android.presentation.PermissionsFragment
 import sarzhane.e.stopfundwar_android.presentation.camera.info.InfoDialogFragment
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CameraViewModel
 import sarzhane.e.stopfundwar_android.presentation.camera.viewmodel.CompaniesResult
-import sarzhane.e.stopfundwar_android.tflite.ObjectDetectionHelper
+import sarzhane.e.stopfundwar_android.tflite.ObjectPrediction
+import sarzhane.e.stopfundwar_android.tflite.SSDObjectDetectionHelper
+import sarzhane.e.stopfundwar_android.tflite.YOLOObjectDetectionHelper
 import sarzhane.e.stopfundwar_android.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -84,7 +86,10 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         Size(inputShape[2], inputShape[1])
     }
     private val detector by lazy {
-        ObjectDetectionHelper(tflite)
+      when(tflite.outputTensorCount){
+          1 -> YOLOObjectDetectionHelper(tflite, tfInputSize)
+          else -> SSDObjectDetectionHelper(tflite)
+      }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -188,17 +193,16 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                 val tfImage = tfImageProcessor.process(tfImageBuffer.apply { load(bitmapBuffer) })
 
                 // Perform the object detection for the current frame
-                val predictions = detector.predict(tfImage)
+                val predictions = when(detector) {
+                    is SSDObjectDetectionHelper -> (detector as SSDObjectDetectionHelper).predict(tfImage)
+                    else  ->(detector as YOLOObjectDetectionHelper).predict(tfImage)
+                }
                 Log.d(
                     "predictions",
                     "predictions ${predictions}"
                 )
                 val temp = predictions.filter { it.score > ACCURACY_THRESHOLD }
 
-//                Log.d(
-//                    "Speed",
-//                    "temp ${temp}"
-//                )
                 if (!pauseAnalysis) {
                     reportPrediction(temp)
                 }
@@ -234,7 +238,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     }
 
     private fun reportPrediction(
-        predictions: List<ObjectDetectionHelper.ObjectPrediction>
+        predictions: List<ObjectPrediction>
     ) {
         val emptyCropSizeBitmap =
             Bitmap.createBitmap(
@@ -263,7 +267,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         val radiusInPx = radius.dpToPx().toInt()
 
         for (prediction in predictions) {
-            val location = mapOutputCoordinates(prediction.location)
+            val location = if (detector is SSDObjectDetectionHelper)ssdMapOutputCoordinates(prediction.location) else yoloMapOutputCoordinates(prediction.location, tfInputSize)
             labelIds.add(prediction.labelId)
             val label: String = prediction.label
             val confidence: Float = prediction.score
@@ -285,13 +289,43 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         })
     }
 
-    private fun mapOutputCoordinates(location: RectF): RectF {
+    private fun ssdMapOutputCoordinates(location: RectF): RectF {
 
         val previewLocation = RectF(
             location.left * binding.viewFinder.width,
             location.top * binding.viewFinder.height,
             location.right * binding.viewFinder.width,
             location.bottom * binding.viewFinder.height
+        )
+
+        val margin = 0.1f
+        val requestedRatio = 4f / 3f
+        val midX = (previewLocation.left + previewLocation.right) / 2f
+        val midY = (previewLocation.top + previewLocation.bottom) / 2f
+        return if (binding.viewFinder.width < binding.viewFinder.height) {
+            RectF(
+                midX - (1f + margin) * requestedRatio * previewLocation.width() / 2f,
+                midY - (1f - margin) * previewLocation.height() / 2f,
+                midX + (1f + margin) * requestedRatio * previewLocation.width() / 2f,
+                midY + (1f - margin) * previewLocation.height() / 2f
+            )
+        } else {
+            RectF(
+                midX - (1f - margin) * previewLocation.width() / 2f,
+                midY - (1f + margin) * requestedRatio * previewLocation.height() / 2f,
+                midX + (1f - margin) * previewLocation.width() / 2f,
+                midY + (1f + margin) * requestedRatio * previewLocation.height() / 2f
+            )
+        }
+    }
+
+    private fun yoloMapOutputCoordinates(location: RectF, size: Size): RectF {
+
+        val previewLocation = RectF(
+            location.left * binding.viewFinder.width/size.width.toFloat(),
+            location.top * binding.viewFinder.height/size.width.toFloat(),
+            location.right * binding.viewFinder.width/size.width.toFloat(),
+            location.bottom * binding.viewFinder.height/size.width.toFloat()
         )
 
         val margin = 0.1f

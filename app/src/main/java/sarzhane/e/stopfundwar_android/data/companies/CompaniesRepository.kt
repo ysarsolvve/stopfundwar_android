@@ -12,7 +12,6 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import sarzhane.e.stopfundwar_android.data.companies.local.CompaniesLocalDataSource
 import sarzhane.e.stopfundwar_android.data.companies.remote.CompaniesRemoteDataSource
 import sarzhane.e.stopfundwar_android.domain.companies.Company
-import sarzhane.e.stopfundwar_android.tflite.ObjectDetectionHelper
 
 
 import javax.inject.Inject

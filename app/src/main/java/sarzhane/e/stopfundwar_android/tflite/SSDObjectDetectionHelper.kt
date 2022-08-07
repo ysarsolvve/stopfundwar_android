@@ -8,9 +8,8 @@ import org.tensorflow.lite.support.common.FileUtil
 import org.tensorflow.lite.support.image.TensorImage
 import sarzhane.e.stopfundwar_android.presentation.camera.view.CameraFragment
 
-class ObjectDetectionHelper(private val tflite: Interpreter) {
+class SSDObjectDetectionHelper(private val tflite: Interpreter) {
 
-    data class ObjectPrediction(val location: RectF, val label: String, val score: Float, val labelId: Int)
 
     private val locations = arrayOf(Array(OBJECT_COUNT) { FloatArray(4) })
     private val labelIndices =  arrayOf(FloatArray(OBJECT_COUNT))
