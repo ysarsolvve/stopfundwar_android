@@ -38,44 +38,37 @@
         <item name="checkedIconEnabled">false</item>
         <item name="checkedIcon">@null</item>
         <item name="android:fontFamily">@font/roboto500</item>
+        <item name="android:textSize">14sp</item>
+        <item name="chipCornerRadius">8dp</item>
     </style>
     <style name="CustomRedChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
         <item name="chipBackgroundColor">@color/chip_red_background_color</item>
-        <item name="android:textColor">@color/chip_red_text_color</item>
-        <item name="checkedIconTint">@color/chip_red_text_color</item>
+        <item name="android:textColor">@color/chip_text_color</item>
+        <item name="checkedIconTint">@color/chip_text_color</item>
         <item name="checkedIconEnabled">false</item>
         <item name="checkedIcon">@null</item>
         <item name="android:fontFamily">@font/roboto500</item>
+        <item name="android:textSize">14sp</item>
+        <item name="chipCornerRadius">8dp</item>
     </style>
     <style name="CustomOrangeChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
         <item name="chipBackgroundColor">@color/chip_orange_background_color</item>
-        <item name="android:textColor">@color/chip_orange_text_color</item>
-        <item name="checkedIconTint">@color/chip_orange_text_color</item>
+        <item name="android:textColor">@color/chip_text_color</item>
+        <item name="checkedIconTint">@color/chip_text_color</item>
         <item name="checkedIconEnabled">false</item>
         <item name="checkedIcon">@null</item>
         <item name="android:fontFamily">@font/roboto500</item>
+        <item name="android:textSize">14sp</item>
+        <item name="chipCornerRadius">8dp</item>
     </style>
     <style name="CustomGreenChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
         <item name="chipBackgroundColor">@color/chip_green_background_color</item>
-        <item name="android:textColor">@color/chip_green_text_color</item>
-        <item name="checkedIconTint">@color/chip_green_text_color</item>
+        <item name="android:textColor">@color/chip_text_color</item>
+        <item name="checkedIconTint">@color/chip_text_color</item>
         <item name="checkedIconEnabled">false</item>
         <item name="checkedIcon">@null</item>
         <item name="android:fontFamily">@font/roboto500</item>
-    </style>
-    <style name="Widget.IndicatorFastScroll.FastScroller" parent="android:Widget">
-        <item name="fastScrollerIconSize">20dp</item>
-        <item name="fastScrollerIconColor">?android:textColorPrimary</item>
-        <item name="android:textAppearance">?android:textAppearanceSmall</item>
-        <item name="android:textColor">?android:textColorPrimary</item>
-        <item name="fastScrollerTextPadding">@dimen/fast_scroller_default_text_padding</item>
-    </style>
-
-    <style name="Widget.IndicatorFastScroll.FastScrollerThumb" parent="android:Widget">
-        <item name="fastScrollerIconSize">24dp</item>
-        <item name="fastScrollerThumbColor">?colorPrimary</item>
-        <item name="fastScrollerIconColor">?android:textColorPrimaryInverse</item>
-        <item name="android:textAppearance">?android:textAppearance</item>
-        <item name="android:textColor">?android:textColorPrimaryInverse</item>
+        <item name="android:textSize">14sp</item>
+        <item name="chipCornerRadius">8dp</item>
     </style>
 </resources>

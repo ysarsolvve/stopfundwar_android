@@ -46,8 +46,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivFirstCharity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="96dp"
+                android:layout_height="0dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
                 android:src="@drawable/first_charity"
@@ -109,8 +109,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivSecondCharity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="96dp"
+                android:layout_height="0dp"
                 android:src="@drawable/second_charity"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -169,8 +169,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivThirdCharity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="96dp"
+                android:layout_height="0dp"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:src="@drawable/third_charity"
@@ -231,8 +231,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivFourthCharity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="96dp"
+                android:layout_height="0dp"
                 android:src="@drawable/fourth_charity"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -291,8 +291,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivFifthCharity"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="96dp"
+                android:layout_height="0dp"
                 android:src="@drawable/fifth_charity"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -351,8 +351,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivSixCharity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="96dp"
+                android:layout_height="0dp"
                 android:src="@drawable/six_charity"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -411,8 +411,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivSevenCharity"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="96dp"
+                android:layout_height="0dp"
                 android:src="@drawable/seven_charity"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -470,8 +470,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivEightCharity"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="96dp"
+                android:layout_height="0dp"
                 android:src="@drawable/eight_charity"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -531,8 +531,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivNineCharity"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="96dp"
+                android:layout_height="0dp"
                 android:src="@drawable/nine_charity"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

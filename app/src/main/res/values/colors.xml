@@ -14,34 +14,34 @@
     <color name="light_green">#C9EAC4</color>
     <color name="light_red">#EAC4C4</color>
     <color name="grey">#918D8D</color>
-    <color name="transparent">#80000000</color>
+    <color name="transparent">#00ffffff</color>
     <color name="textColorHint">#767680</color>
     <color name="bg_search">#E8E8E8</color>
     <color name="onboarding_grey">#9C9C9C</color>
     <color name="skeleton_color">#E7E7E7</color>
 
     // Custom Chip Style
-    <color name="checkedChipBackgroundColor">#CBCBCB</color>
+    <color name="checkedChipBackgroundColor">#A7A7A7</color>
     <color name="chipBackgroundColor">@color/bg_search</color>
     <color name="checkedChipTextColor">@color/white</color>
     <color name="chipTextColor">#999999</color>
 
     // Custom Red Chip Style
-    <color name="checkedRedChipBackgroundColor">@color/light_red</color>
+    <color name="checkedRedChipBackgroundColor">@color/red</color>
     <color name="chipRedBackgroundColor">@color/bg_search</color>
-    <color name="checkedRedChipTextColor">@color/red</color>
+    <color name="checkedRedChipTextColor">@color/white</color>
     <color name="chipRedTextColor">#999999</color>
 
     // Custom Orange Chip Style
-    <color name="checkedOrangeChipBackgroundColor">@color/light_orange</color>
+    <color name="checkedOrangeChipBackgroundColor">@color/orange</color>
     <color name="chipOrangeBackgroundColor">@color/bg_search</color>
-    <color name="checkedOrangeChipTextColor">@color/orange</color>
+    <color name="checkedOrangeChipTextColor">@color/white</color>
     <color name="chipOrangeTextColor">#999999</color>
 
     // Custom Green Chip Style
-    <color name="checkedGreenChipBackgroundColor">@color/light_green</color>
+    <color name="checkedGreenChipBackgroundColor">@color/green</color>
     <color name="chipGreenBackgroundColor">@color/bg_search</color>
-    <color name="checkedGreenChipTextColor">@color/green</color>
+    <color name="checkedGreenChipTextColor">@color/white</color>
     <color name="chipGreenTextColor">#999999</color>
 
 </resources>

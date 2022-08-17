@@ -267,18 +267,24 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         val radiusInPx = radius.dpToPx().toInt()
 
         for (prediction in predictions) {
-            val location = if (detector is SSDObjectDetectionHelper)ssdMapOutputCoordinates(prediction.location) else yoloMapOutputCoordinates(prediction.location, tfInputSize)
-            labelIds.add(prediction.labelId)
-            val label: String = prediction.label
-            val confidence: Float = prediction.score
-            cropCanvas.drawRect(location, boxPaint.apply { boxPaint.color = colors.getValue(prediction.labelId) })
-            cropCanvas.drawText(
-                label + ":" + String.format("%.2f", confidence),
-                location.left,
-                location.top,
-                textPain.apply { textPain.color = colors.getValue(prediction.labelId) }
-            )
+            val location =
+                if (detector is SSDObjectDetectionHelper) ssdMapOutputCoordinates(prediction.location)
+                else yoloMapOutputCoordinates(prediction.location, tfInputSize)
+            if (location.centerY() < binding.boxLabelCanvas.pivotY) {
+                labelIds.add(prediction.labelId)
+                val label: String = prediction.label
+                val confidence: Float = prediction.score
+                cropCanvas.drawRect(
+                    location,
+                    boxPaint.apply { boxPaint.color = colors.getValue(prediction.labelId) })
+                cropCanvas.drawText(
+                    label + ":" + String.format("%.2f", confidence),
+                    location.left,
+                    location.top,
+                    textPain.apply { textPain.color = colors.getValue(prediction.labelId) }
+                )
 //            cropCanvas.drawCircle(location.centerX(), location.centerY(), radiusInPx.toFloat(), circlePaint.apply { circlePaint.color = colors.getValue(prediction.labelId)})
+            }
         }
         viewModel.getCompany(labelIds.map { it.toString() })
         labelIds.clear()
@@ -451,9 +457,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     }
 
     companion object {
-
-        private const val ACCURACY_THRESHOLD = 0.40f
-        private const val MODEL_PATH = "model.tflite"
+        private const val ACCURACY_THRESHOLD = 0.70f
     }
 
 }

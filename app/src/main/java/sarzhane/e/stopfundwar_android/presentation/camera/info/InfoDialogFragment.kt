@@ -24,7 +24,6 @@ class InfoDialogFragment : DialogFragment(R.layout.fragment_info_pager) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setFullScreen()
         setInfoItems()
         setupIndicators()
         setCurrentIndicator(0)

@@ -60,12 +60,12 @@ class YOLOObjectDetectionHelper(private val tflite: Interpreter,private val size
             )
         }
 
-        // Неэкстремально подавленный выход
-        Log.d("Speed","nms start")
-        val nmsRecognitions = nms(allRecognitions)
-        Log.d("Speed","nms finish")
+//        // Неэкстремально подавленный выход
+//        Log.d("Speed","nms start")
+//        val nmsRecognitions = nms(allRecognitions)
+//        Log.d("Speed","nms finish")
         // Второе неэкстремальное подавление, фильтрация тех, у которых более 2 границ одной цели идентифицированы как разные классы
-        val nmsFilterBoxDuplicationRecognitions = nmsAllClass(nmsRecognitions)
+        val nmsFilterBoxDuplicationRecognitions = nmsAllClass(allRecognitions)
         Log.d("Speed","nmsAllClass finish")
         return nmsFilterBoxDuplicationRecognitions
     }
@@ -84,7 +84,7 @@ class YOLOObjectDetectionHelper(private val tflite: Interpreter,private val size
 
             // отфильтровать одинаковые категории, при этом obj должен быть больше установленного порога
             for (j in allRecognitions.indices) {
-                if (allRecognitions[j].labelId == i && allRecognitions[j].score > 0.7) {
+                if (allRecognitions[j].labelId == i && allRecognitions[j].score > ACCURACY_THRESHOLD) {
                     pq.add(allRecognitions[j])
                 }
             }
@@ -99,7 +99,7 @@ class YOLOObjectDetectionHelper(private val tflite: Interpreter,private val size
                 pq.clear()
                 for (k in 1 until detections.size) {
                     val detection = detections[k]
-                    if (boxIou(max.location, detection.location) < 0.7) {
+                    if (boxIou(max.location, detection.location) < ACCURACY_THRESHOLD) {
                         pq.add(detection)
                     }
                 }
@@ -118,7 +118,7 @@ class YOLOObjectDetectionHelper(private val tflite: Interpreter,private val size
 
         // отфильтровать одинаковые категории, при этом obj должен быть больше установленного порога
         for (j in allRecognitions.indices) {
-            if (allRecognitions[j].score > 0.7) {
+            if (allRecognitions[j].score > ACCURACY_THRESHOLD) {
                 pq.add(allRecognitions[j])
             }
         }
@@ -134,7 +134,7 @@ class YOLOObjectDetectionHelper(private val tflite: Interpreter,private val size
                 if (boxIou(
                         max.location,
                         detection.location
-                    ) < 0.7
+                    ) < ACCURACY_THRESHOLD
                 ) {
                     pq.add(detection)
                 }
@@ -163,5 +163,9 @@ class YOLOObjectDetectionHelper(private val tflite: Interpreter,private val size
     private fun boxUnion(a: RectF, b: RectF): Float {
         val i = boxIntersection(a, b)
         return (a.right - a.left) * (a.bottom - a.top) + (b.right - b.left) * (b.bottom - b.top) - i
+    }
+
+    companion object {
+        private const val ACCURACY_THRESHOLD = 0.70f
     }
 }
