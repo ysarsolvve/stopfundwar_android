@@ -199,7 +199,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                 }
                 Log.d(
                     "predictions",
-                    "predictions ${predictions}"
+                    "predictions ${predictions}, ${detector is SSDObjectDetectionHelper}"
                 )
                 val temp = predictions.filter { it.score > ACCURACY_THRESHOLD }
 
