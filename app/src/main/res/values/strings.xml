@@ -1,6 +1,6 @@
 <resources>
     <!--  App name -->
-    <string name="app_name">stopfundwar_android</string>
+    <string name="app_name">Stop Funding War</string>
 
     <!--  Onboard  -->
     <string name="onboard_first_title">Every day Civilians\nare dying in Ukraine</string>
